@@ -65,6 +65,8 @@
 
   function clearHost() {
     host.innerHTML = "";
+    // 切换视图时回到顶部，避免沿用上一个视图的滚动位置
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }
 
   function setTitle(suffix) {
