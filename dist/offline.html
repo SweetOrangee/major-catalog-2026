@@ -1,0 +1,1669 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+<meta name="theme-color" content="#F4EFE4" />
+<meta name="description" content="《普通高等学校本科专业目录（2026 年）》交互查阅 · 教育部 2026 年 4 月发布" />
+<title>本科专业目录 · 2026 · 教育部</title>
+<style>
+/* =========================================================
+   本科专业目录 · 2026
+   学院派编辑设计：纸面、墨色、朱砂红，宋体大字与中文留白
+   ========================================================= */
+
+:root {
+  /* 纸张色调：偏暖的米黄，模拟内文用纸 */
+  --paper:       #F3EDDF;
+  --paper-soft:  #FAF5E8;
+  --paper-deep:  #E9E1CD;
+
+  /* 墨色谱：主文 / 次文 / 浅墨 */
+  --ink:         #1A1815;
+  --ink-soft:    #5C544A;
+  --ink-mute:    #8E847A;
+
+  /* 朱砂红：钤印、特设标记、强调 */
+  --vermilion:   #9C2A1C;
+  --vermilion-deep: #7A1F14;
+  --seal-bg:     #B53127;
+
+  /* 国控蓝：仅作 K 标签 */
+  --indigo:      #2C3E66;
+
+  /* 分隔线 / 阴影 */
+  --rule:        #C9BFA8;
+  --rule-soft:   #DDD4BD;
+
+  /* 字体 */
+  --font-serif:  "Songti SC", "STSong", "SimSun", "Source Han Serif SC", "Noto Serif SC", serif;
+  --font-sans:   "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans SC", "Noto Sans SC", system-ui, sans-serif;
+  --font-mono:   "SF Mono", "JetBrains Mono", Menlo, Monaco, Consolas, "Courier New", monospace;
+
+  /* 排版尺度 */
+  --leading-tight: 1.2;
+  --leading-body:  1.7;
+  --tracking-wide: 0.06em;
+
+  /* 节奏 */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+  --space-10: 4rem;
+  --space-12: 6rem;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: var(--leading-body);
+  color: var(--ink);
+  background-color: var(--paper);
+  /* 纸面纹理：一层非常淡的横线 + 噪点 */
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 28px,
+      rgba(154, 132, 96, 0.04) 28px 29px
+    );
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "palt", "kern";
+  text-rendering: optimizeLegibility;
+}
+
+/* 全局焦点态：保留可见焦点环，去掉点击时的高亮抖动 */
+:focus-visible {
+  outline: 2px solid var(--vermilion);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+a {
+  color: inherit;
+  text-decoration: none;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+a:hover { color: var(--vermilion); text-decoration: underline; }
+
+button {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+hr.rule {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: var(--space-6) 0;
+}
+hr.rule--double {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  position: relative;
+  margin: var(--space-6) 0;
+}
+hr.rule--double::after {
+  content: "";
+  display: block;
+  border-top: 3px double var(--rule);
+  margin-top: 4px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  inset: auto auto auto -9999px;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 8px 12px;
+  z-index: 100;
+}
+.skip-link:focus {
+  inset: 8px auto auto 8px;
+}
+
+/* =========================================================
+   页眉
+   ========================================================= */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  backdrop-filter: saturate(1.1) blur(8px);
+  -webkit-backdrop-filter: saturate(1.1) blur(8px);
+  border-bottom: 1px solid var(--rule);
+  /* 安全区，留出刘海 */
+  padding-top: env(safe-area-inset-top);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  max-width: 84rem;
+  margin: 0 auto;
+  padding: 0.875rem clamp(1rem, 3vw, 2rem);
+}
+
+.site-header__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+.site-header__brand:hover { color: inherit; text-decoration: none; }
+.site-header__brand:hover .site-header__title-main { color: var(--vermilion); }
+
+.site-header__seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--paper);
+  background: var(--seal-bg);
+  /* 模拟印章：略带不规则边缘 */
+  clip-path: polygon(
+    4% 6%, 12% 0%, 88% 2%, 96% 8%,
+    100% 24%, 98% 78%, 96% 92%, 88% 100%,
+    14% 96%, 4% 94%, 0% 80%, 2% 14%
+  );
+  letter-spacing: 0;
+  user-select: none;
+}
+
+.site-header__title {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+.site-header__title-main {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  transition: color 160ms ease;
+}
+.site-header__title-sub {
+  font-size: 0.7rem;
+  color: var(--ink-soft);
+  letter-spacing: var(--tracking-wide);
+  font-feature-settings: "tnum";
+}
+
+/* 搜索 */
+.search {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 32rem;
+  margin-left: auto;
+}
+.search__label {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  pointer-events: none;
+  letter-spacing: var(--tracking-wide);
+}
+.search__input {
+  width: 100%;
+  height: 44px;
+  padding: 0 3rem 0 3.5rem;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--ink);
+  background: var(--paper-soft);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  transition: border-color 160ms ease, background-color 160ms ease;
+  touch-action: manipulation;
+}
+.search__input::placeholder { color: var(--ink-mute); }
+.search__input:hover { border-color: var(--ink-mute); }
+.search__input:focus-visible {
+  outline: 2px solid var(--vermilion);
+  outline-offset: 1px;
+  border-color: var(--vermilion);
+  background: var(--paper-soft);
+}
+.search__hint {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-mute);
+  border: 1px solid var(--rule);
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: var(--paper);
+  pointer-events: none;
+}
+
+.site-header__notes {
+  flex-shrink: 0;
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  letter-spacing: 0.2em;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  background: var(--paper-soft);
+  transition: border-color 160ms ease, color 160ms ease;
+  min-height: 40px;
+  /* 中文字间距导致最后字偏左，做一下补偿 */
+  padding-right: calc(0.9rem - 0.2em);
+}
+.site-header__notes:hover {
+  color: var(--vermilion);
+  border-color: var(--vermilion);
+}
+
+/* =========================================================
+   主体容器
+   ========================================================= */
+.view-host {
+  max-width: 84rem;
+  margin: 0 auto;
+  padding: var(--space-8) clamp(1rem, 3vw, 2rem) var(--space-12);
+  outline: none;
+}
+
+/* =========================================================
+   首页：扉页 + 章节目录
+   ========================================================= */
+.page-home {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+/* 扉页区 */
+.cover {
+  padding: var(--space-8) 0 var(--space-6);
+  text-align: left;
+  position: relative;
+}
+.cover__eyebrow {
+  margin: 0 0 var(--space-5);
+  font-family: var(--font-serif);
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+.cover__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.05;
+  display: flex;
+  flex-direction: column;
+  text-wrap: balance;
+}
+.cover__title-line--small {
+  font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: 0.32em;
+  color: var(--ink-soft);
+  margin-bottom: var(--space-2);
+}
+.cover__title-line--large {
+  font-size: clamp(3.75rem, 12vw, 8.5rem);
+  letter-spacing: 0.12em;
+}
+.cover__year {
+  margin: var(--space-5) 0 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  letter-spacing: 0.5em;
+  color: var(--vermilion);
+}
+
+/* 三联数字 */
+.cover__stats {
+  margin: var(--space-8) 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: var(--space-5) 0;
+}
+.cover__stats > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+.cover__stats dt {
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  letter-spacing: 0.25em;
+  color: var(--ink-soft);
+  order: 2;
+}
+.cover__stats dd {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: clamp(2.75rem, 7vw, 4.5rem);
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum", "lnum";
+  order: 1;
+}
+
+/* 章节目录 */
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  letter-spacing: 0.5em;
+  color: var(--ink-soft);
+  margin: 0 0 var(--space-5);
+  font-weight: 400;
+}
+.catalog__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: cat;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.catalog-item {
+  display: grid;
+  grid-template-columns: 4.5rem auto 1fr auto;
+  gap: var(--space-4);
+  align-items: baseline;
+  padding: var(--space-5) var(--space-2);
+  border-top: 1px solid var(--rule-soft);
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 180ms ease, color 180ms ease;
+  position: relative;
+}
+.catalog-item:last-child { border-bottom: 1px solid var(--rule-soft); }
+.catalog-item:hover {
+  background-color: color-mix(in srgb, var(--paper-soft) 80%, transparent);
+  color: var(--vermilion);
+  text-decoration: none;
+}
+.catalog-item:hover .catalog-item__dots { color: var(--vermilion); }
+
+.catalog-item__code {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 2.25rem;
+  letter-spacing: 0.05em;
+  color: var(--vermilion);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.catalog-item__name {
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+.catalog-item__dots {
+  /* 占位的虚线引线，靠 border 实现 */
+  align-self: center;
+  height: 0;
+  border-bottom: 1px dotted var(--rule);
+  transform: translateY(0.4em);
+}
+.catalog-item__count {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.catalog-item__count em {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--ink);
+  margin-right: 0.25em;
+}
+
+/* 扉页页脚 */
+.cover__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+.cover__hint { margin: 0; }
+.cover__legend { margin: 0; }
+.cover__legend em.tag {
+  font-style: normal;
+  margin: 0 0.15em;
+}
+
+/* T / K 标签 */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  padding: 0 0.35rem;
+  height: 1.2rem;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+.tag--T { color: var(--vermilion); }
+.tag--K { color: var(--indigo); }
+
+/* =========================================================
+   面包屑
+   ========================================================= */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin-bottom: var(--space-5);
+  letter-spacing: 0.08em;
+}
+.breadcrumb a { color: var(--ink-soft); }
+.breadcrumb a:hover { color: var(--vermilion); }
+
+/* =========================================================
+   门类页
+   ========================================================= */
+.cat-head {
+  padding: var(--space-4) 0 var(--space-6);
+}
+.cat-head__code {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  color: var(--vermilion);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: 0.05em;
+}
+.cat-head__title {
+  margin: 0.5rem 0 0;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: clamp(2.25rem, 5.5vw, 3.5rem);
+  letter-spacing: 0.15em;
+  line-height: 1.1;
+}
+.cat-head__meta {
+  margin: var(--space-4) 0 0;
+  font-family: var(--font-serif);
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+.cat-head__meta .dot { margin: 0 var(--space-2); color: var(--rule); }
+
+.cat-body {
+  display: grid;
+  grid-template-columns: 14rem minmax(0, 1fr);
+  gap: var(--space-8);
+  align-items: start;
+}
+
+.cat-toc {
+  position: sticky;
+  top: 86px;
+  align-self: start;
+  font-size: 0.92rem;
+}
+.cat-toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 1px solid var(--rule);
+}
+.cat-toc li { margin: 0; }
+.cat-toc a {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: 0.55rem var(--space-3);
+  border-left: 2px solid transparent;
+  margin-left: -1px;
+  color: var(--ink-soft);
+  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
+}
+.cat-toc a:hover { color: var(--vermilion); text-decoration: none; }
+.cat-toc a[aria-current="true"] {
+  color: var(--ink);
+  border-left-color: var(--vermilion);
+  background: color-mix(in srgb, var(--paper-soft) 60%, transparent);
+}
+.cat-toc__num {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+
+.cat-content { min-width: 0; }
+
+.cls-block { margin: 0 0 var(--space-10); scroll-margin-top: 96px; }
+.cls-block:last-child { margin-bottom: 0; }
+
+.cls-block__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: var(--space-4);
+}
+.cls-block__code {
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  color: var(--vermilion);
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+.cls-block__name {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1.45rem;
+  letter-spacing: 0.1em;
+}
+.cls-block__count {
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.major-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  gap: 1px;
+  background-color: var(--rule-soft);
+  border: 1px solid var(--rule-soft);
+}
+
+.major {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-4);
+  background: var(--paper-soft);
+  text-align: left;
+  text-decoration: none;
+  color: inherit;
+  min-height: 84px;
+  transition: background-color 180ms ease, color 180ms ease;
+  width: 100%;
+  cursor: pointer;
+}
+.major:hover {
+  background: var(--paper);
+  color: var(--vermilion);
+  text-decoration: none;
+}
+.major:hover .major__name { color: var(--vermilion); }
+
+.major__code {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  padding-top: 2px;
+  min-width: 5.2rem;
+}
+.major__main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.major__name {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.05em;
+  line-height: 1.35;
+  color: var(--ink);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4em;
+  word-break: break-word;
+}
+.major__name .tag { font-size: 0.6rem; height: 1.05rem; }
+.major__note {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.major__has-intro {
+  font-family: var(--font-serif);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: var(--vermilion);
+  margin-top: 2px;
+}
+
+/* =========================================================
+   搜索结果
+   ========================================================= */
+.search-head { padding: var(--space-2) 0 var(--space-5); }
+.search-head__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  letter-spacing: 0.08em;
+}
+.search-head__meta {
+  margin: var(--space-3) 0 0;
+  font-family: var(--font-serif);
+  letter-spacing: 0.2em;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+.search-results { display: flex; flex-direction: column; gap: var(--space-8); }
+.search-empty {
+  margin-top: var(--space-6);
+  padding: var(--space-6);
+  text-align: center;
+  border: 1px dashed var(--rule);
+  color: var(--ink-soft);
+  font-family: var(--font-serif);
+  letter-spacing: 0.1em;
+}
+mark.hl {
+  background: rgba(156, 42, 28, 0.15);
+  color: inherit;
+  padding: 0 1px;
+  border-radius: 1px;
+}
+
+/* =========================================================
+   抽屉（专业详情 / 凡例）
+   ========================================================= */
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+}
+.drawer[hidden] { display: none; }
+.drawer__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 24, 21, 0.32);
+  opacity: 0;
+  transition: opacity 220ms ease;
+  pointer-events: auto;
+}
+.drawer__panel {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(100%, 36rem);
+  background: var(--paper);
+  border-left: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 280ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  pointer-events: auto;
+  overscroll-behavior: contain;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.drawer.is-open .drawer__scrim { opacity: 1; }
+.drawer.is-open .drawer__panel { transform: translateX(0); }
+
+.drawer__head {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--space-3) var(--space-3) 0;
+}
+.drawer__close {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--ink-soft);
+  transition: color 160ms ease, border-color 160ms ease;
+}
+.drawer__close:hover { color: var(--vermilion); border-color: var(--vermilion); }
+
+.drawer__body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: var(--space-4) var(--space-6) var(--space-8);
+}
+
+/* 专业详情 */
+.detail__eyebrow {
+  font-family: var(--font-serif);
+  letter-spacing: 0.25em;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+.detail__code {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--vermilion);
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  margin: var(--space-3) 0 var(--space-2);
+}
+.detail__name {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.15;
+  margin: 0 0 var(--space-4);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4em;
+}
+.detail__name .tag { font-size: 0.7rem; height: 1.3rem; }
+
+.detail__meta {
+  margin: 0 0 var(--space-5);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  row-gap: var(--space-2);
+  column-gap: var(--space-3);
+  font-size: 0.92rem;
+}
+.detail__meta dt {
+  color: var(--ink-soft);
+  font-family: var(--font-serif);
+  letter-spacing: 0.18em;
+}
+.detail__meta dd {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-serif);
+}
+
+.detail__section {
+  margin: var(--space-5) 0 0;
+}
+.detail__section h3 {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: var(--ink-soft);
+}
+.detail__section p {
+  margin: 0 0 var(--space-3);
+  line-height: var(--leading-body);
+  color: var(--ink);
+}
+.detail__section .placeholder {
+  padding: var(--space-4);
+  border: 1px dashed var(--rule);
+  color: var(--ink-soft);
+  font-family: var(--font-serif);
+  letter-spacing: 0.05em;
+  background: color-mix(in srgb, var(--paper-soft) 60%, transparent);
+}
+
+/* 凡例 */
+.notes-body h2 {
+  margin: 0 0 var(--space-5);
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  letter-spacing: 0.3em;
+  font-weight: 700;
+}
+.notes-body ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: notes;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.notes-body li {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr;
+  gap: var(--space-3);
+  align-items: baseline;
+}
+.notes-body li::before {
+  counter-increment: notes;
+  content: counter(notes, cjk-decimal) "、";
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  color: var(--vermilion);
+  letter-spacing: 0;
+}
+.notes-body p {
+  margin: 0;
+  line-height: var(--leading-body);
+}
+
+/* =========================================================
+   动效（克制）：标题入场、分隔线展开
+   ========================================================= */
+@media (prefers-reduced-motion: no-preference) {
+  .cover__eyebrow,
+  .cover__title-line--small,
+  .cover__title-line--large,
+  .cover__year,
+  .cover__stats {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: rise 600ms ease-out forwards;
+  }
+  .cover__title-line--small { animation-delay: 80ms; }
+  .cover__title-line--large { animation-delay: 160ms; }
+  .cover__year             { animation-delay: 320ms; }
+  .cover__stats            { animation-delay: 440ms; }
+
+  .catalog__list > li > .catalog-item {
+    opacity: 0;
+    transform: translateY(4px);
+    animation: rise 420ms ease-out forwards;
+    /* 通过内联 --i 控制错落延迟 */
+    animation-delay: calc(80ms + var(--i, 0) * 45ms);
+  }
+
+  @keyframes rise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* =========================================================
+   响应式 / 平板优先
+   ========================================================= */
+@media (max-width: 880px) {
+  .cat-body {
+    grid-template-columns: 1fr;
+  }
+  .cat-toc {
+    position: relative;
+    top: 0;
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--rule);
+  }
+  .cat-toc ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    border-left: 0;
+  }
+  .cat-toc a {
+    padding: 0.4rem 0.7rem;
+    border: 1px solid var(--rule);
+    border-left-width: 1px;
+    border-radius: 2px;
+  }
+  .cat-toc a[aria-current="true"] {
+    background: var(--paper-deep);
+    border-color: var(--ink-soft);
+  }
+  .catalog-item {
+    grid-template-columns: 3rem 1fr auto;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-2);
+  }
+  .catalog-item__code { font-size: 1.5rem; }
+  .catalog-item__name { font-size: 1.25rem; }
+  .catalog-item__dots { display: none; }
+}
+
+@media (max-width: 640px) {
+  .site-header__title-sub { display: none; }
+  .search__hint { display: none; }
+  .site-header__notes {
+    padding: 0.5rem 0.6rem;
+    letter-spacing: 0.1em;
+    padding-right: calc(0.6rem - 0.1em);
+  }
+  .cover__stats { grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+}
+
+/* 视觉减弱选项 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">跳到正文</a>
+
+<header class="site-header" role="banner">
+  <div class="site-header__inner">
+    <a href="#" class="site-header__brand" aria-label="返回扉页">
+      <span class="site-header__seal" aria-hidden="true">部</span>
+      <span class="site-header__title">
+        <span class="site-header__title-main">本科专业目录</span>
+        <span class="site-header__title-sub">中华人民共和国教育部 · 2026</span>
+      </span>
+    </a>
+
+    <form class="search" role="search" id="search-form" autocomplete="off">
+      <label class="search__label" for="search-input">检索</label>
+      <input
+        id="search-input"
+        type="search"
+        name="q"
+        class="search__input"
+        placeholder="搜索专业、代码或类别…"
+        inputmode="search"
+        spellcheck="false"
+        translate="no"
+      />
+      <kbd class="search__hint" aria-hidden="true">/</kbd>
+    </form>
+
+    <button type="button" class="site-header__notes" id="open-notes" aria-haspopup="dialog">
+      <span aria-hidden="true">凡例</span>
+      <span class="visually-hidden">查看专业目录的编排说明</span>
+    </button>
+  </div>
+</header>
+
+<main id="main" class="view-host" tabindex="-1"></main>
+
+<aside class="drawer" id="drawer" hidden aria-hidden="true" aria-labelledby="drawer-title" role="dialog">
+  <div class="drawer__scrim" data-close></div>
+  <article class="drawer__panel" role="document">
+    <header class="drawer__head">
+      <button type="button" class="drawer__close" data-close aria-label="关闭详情">
+        <span aria-hidden="true">×</span>
+      </button>
+    </header>
+    <div class="drawer__body" id="drawer-body"><!-- 动态填充 --></div>
+  </article>
+</aside>
+
+<aside class="drawer drawer--notes" id="notes-dialog" hidden aria-hidden="true" aria-labelledby="notes-title" role="dialog">
+  <div class="drawer__scrim" data-close></div>
+  <article class="drawer__panel" role="document">
+    <header class="drawer__head">
+      <button type="button" class="drawer__close" data-close aria-label="关闭凡例">
+        <span aria-hidden="true">×</span>
+      </button>
+    </header>
+    <div class="drawer__body" id="notes-body"><!-- 动态填充 --></div>
+  </article>
+</aside>
+
+<template id="tpl-home">
+  <section class="page-home" aria-labelledby="cover-title">
+    <div class="cover">
+      <p class="cover__eyebrow">中华人民共和国教育部 · 二〇二六年四月发布</p>
+      <h1 class="cover__title" id="cover-title">
+        <span class="cover__title-line cover__title-line--small">普通高等学校</span>
+        <span class="cover__title-line cover__title-line--large">本科专业目录</span>
+      </h1>
+      <p class="cover__year"><span aria-hidden="true">二〇二六</span><span class="visually-hidden">2026 年</span></p>
+
+      <dl class="cover__stats" aria-label="目录规模">
+        <div><dt>学科门类</dt><dd data-stat="categories">—</dd></div>
+        <div><dt>专业类</dt><dd data-stat="classes">—</dd></div>
+        <div><dt>本科专业</dt><dd data-stat="majors">—</dd></div>
+      </dl>
+    </div>
+
+    <hr class="rule rule--double" aria-hidden="true" />
+
+    <nav class="catalog" aria-label="学科门类目录">
+      <h2 class="section-title"><span aria-hidden="true">目　录</span><span class="visually-hidden">学科门类目录</span></h2>
+      <ol class="catalog__list" id="catalog-list"><!-- 动态填充 --></ol>
+    </nav>
+
+    <hr class="rule" aria-hidden="true" />
+
+    <section class="cover__footer">
+      <p class="cover__hint">
+        点击门类可查看其下属的专业类与本科专业；点击专业可查看代码、所属与官方括注。
+      </p>
+      <p class="cover__legend">
+        代码后缀 <em class="tag tag--T">T</em> 表示特设专业，<em class="tag tag--K">K</em> 表示国家控制布点专业。
+      </p>
+    </section>
+  </section>
+</template>
+
+<template id="tpl-category">
+  <section class="page-category" aria-labelledby="cat-title">
+    <nav class="breadcrumb" aria-label="位置">
+      <a href="#">扉页</a>
+      <span aria-hidden="true">／</span>
+      <span data-breadcrumb-current>—</span>
+    </nav>
+
+    <header class="cat-head">
+      <p class="cat-head__code" data-cat-code>—</p>
+      <h1 class="cat-head__title" id="cat-title" data-cat-name>—</h1>
+      <p class="cat-head__meta">
+        <span data-cat-class-count>—</span> 个专业类
+        <span class="dot" aria-hidden="true">·</span>
+        <span data-cat-major-count>—</span> 个本科专业
+      </p>
+    </header>
+
+    <hr class="rule" aria-hidden="true" />
+
+    <div class="cat-body">
+      <nav class="cat-toc" aria-label="本门类内的专业类导航">
+        <ul data-cat-toc></ul>
+      </nav>
+      <div class="cat-content" data-cat-content></div>
+    </div>
+  </section>
+</template>
+
+<template id="tpl-search">
+  <section class="page-search" aria-labelledby="search-title">
+    <nav class="breadcrumb" aria-label="位置">
+      <a href="#">扉页</a>
+      <span aria-hidden="true">／</span>
+      <span>检索结果</span>
+    </nav>
+
+    <header class="search-head">
+      <h1 class="search-head__title" id="search-title">
+        “<span data-search-q>—</span>” 的检索结果
+      </h1>
+      <p class="search-head__meta" aria-live="polite">
+        共 <span data-search-count>0</span> 个结果
+      </p>
+    </header>
+
+    <hr class="rule" aria-hidden="true" />
+
+    <div class="search-results" data-search-results></div>
+    <p class="search-empty" data-search-empty hidden>未找到匹配的专业。试试输入完整专业名称、代码或所属类别。</p>
+  </section>
+</template>
+
+<script>
+window.MAJORS_DATA = {"meta":{"title":"普通高等学校本科专业目录","year":2026,"publisher":"中华人民共和国教育部","publishDate":"2026 年 4 月","source":"教育部官网附件 W020260427440749576927.pdf","notes":["《普通高等学校本科专业目录》是高等教育工作的基本指导性文件之一。它规定专业划分、名称及所属门类，是设置和调整专业、实施人才培养、安排招生、授予学位、指导就业，进行教育统计和人才需求预测等工作的重要依据。专业目录每年更新发布。","专业目录包含基本专业和特设专业。基本专业一般是指学科基础比较成熟、社会需求相对稳定、布点数量相对较多、继承性较好的专业。特设专业是满足经济社会发展特殊需求所设置的专业，在专业代码后加“T”表示。","专业目录中涉及国家安全、特殊行业等专业由国家控制布点，称为国家控制布点专业，在专业代码后加“K”表示。","专业目录所列专业，除已注明者外，均按所在学科门类授予相应的学位。对已注明了学位授予门类的专业，按照注明的学科门类授予相应的学位；可授两种（或以上）学位门类的专业，原则上由有关高等学校在设置专业布点时确定授予其中一种。","本科教育的基本修业年限为四至五年，各专业修业年限由有关高等学校在设置专业布点时确定，专业目录不再单独列出。"]},"stats":{"categories":13,"classes":92,"majors":883},"categories":[{"code":"01","name":"哲学","classes":[{"code":"0101","name":"哲学类","majors":[{"code":"010101","name":"哲学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"010102","name":"逻辑学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"010103K","name":"宗教学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"010104T","name":"伦理学","isSpecial":true,"isControlled":false,"note":null,"intro":null}]}]},{"code":"02","name":"经济学","classes":[{"code":"0201","name":"经济学类","majors":[{"code":"020101","name":"经济学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"020102","name":"经济统计学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"020103T","name":"国民经济管理","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"020104T","name":"资源与环境经济学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"020105T","name":"商务经济学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"020106T","name":"能源经济","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"020107T","name":"劳动经济学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"020108T","name":"经济工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"020109T","name":"数字经济","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"020110TK","name":"低空经济与管理","isSpecial":true,"isControlled":true,"note":"授予管理学学士学位","intro":null},{"code":"020111T","name":"资源环境审计","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0202","name":"财政学类","majors":[{"code":"020201K","name":"财政学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"020202","name":"税收学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"020203TK","name":"国际税收","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0203","name":"金融学类","majors":[{"code":"020301K","name":"金融学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"020302","name":"金融工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"020303","name":"保险学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"020304","name":"投资学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"020305T","name":"金融数学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"020306T","name":"信用管理","isSpecial":true,"isControlled":false,"note":"可授经济学或管理学学士学位","intro":null},{"code":"020307T","name":"经济与金融","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"020308T","name":"精算学","isSpecial":true,"isControlled":false,"note":"可授经济学或理学学士学位","intro":null},{"code":"020309T","name":"互联网金融","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"020310T","name":"金融科技","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"020311TK","name":"金融审计","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"020312TK","name":"数字金融","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0204","name":"经济与贸易类","majors":[{"code":"020401","name":"国际经济与贸易","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"020402","name":"贸易经济","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"020403T","name":"国际经济发展合作","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"020404TK","name":"数字贸易","isSpecial":true,"isControlled":true,"note":null,"intro":null}]}]},{"code":"03","name":"法学","classes":[{"code":"0301","name":"法学类","majors":[{"code":"030101K","name":"法学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"030102T","name":"知识产权","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"030103T","name":"监狱学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"030104T","name":"信用风险管理与法律防控","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"030105T","name":"国际经贸规则","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"030106TK","name":"司法警察学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030107TK","name":"社区矫正","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030108TK","name":"纪检监察","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030109TK","name":"国际法","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030110TK","name":"司法鉴定学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030111TK","name":"国家安全学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030112TK","name":"海外利益安全","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0302","name":"政治学类","majors":[{"code":"030201","name":"政治学与行政学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"030202","name":"国际政治","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"030203","name":"外交学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"030204T","name":"国际事务与国际关系","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"030205T","name":"政治学、经济学与哲学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"030206TK","name":"国际组织与全球治理","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0303","name":"社会学类","majors":[{"code":"030301","name":"社会学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"030302","name":"社会工作","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"030303T","name":"人类学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"030304T","name":"女性学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"030305T","name":"家政学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"030306T","name":"老年学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"030307T","name":"社会政策","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0304","name":"民族学类","majors":[{"code":"030401","name":"民族学","isSpecial":false,"isControlled":false,"note":null,"intro":null}]},{"code":"0305","name":"马克思主义理论类","majors":[{"code":"030501","name":"科学社会主义","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"030502","name":"中国共产党历史","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"030503","name":"思想政治教育","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"030504T","name":"马克思主义理论","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"030505TK","name":"工会学","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0306","name":"公安学类","majors":[{"code":"030601K","name":"治安学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"030602K","name":"侦查学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"030603K","name":"边防管理","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"030604TK","name":"禁毒学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030605TK","name":"警犬技术","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030606TK","name":"经济犯罪侦查","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030607TK","name":"边防指挥","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030608TK","name":"消防指挥","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030609TK","name":"警卫学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030610TK","name":"公安情报学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030611TK","name":"犯罪学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030612TK","name":"公安管理学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030613TK","name":"涉外警务","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030614TK","name":"国内安全保卫","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030615TK","name":"警务指挥与战术","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030616TK","name":"技术侦查学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030617TK","name":"海警执法","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030618TK","name":"公安政治工作","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030619TK","name":"移民管理","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030620TK","name":"出入境管理","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030621TK","name":"反恐警务","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030622TK","name":"消防政治工作","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030623TK","name":"铁路警务","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030624TK","name":"森林消防","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"030625TK","name":"政治安全保卫","isSpecial":true,"isControlled":true,"note":null,"intro":null}]}]},{"code":"04","name":"教育学","classes":[{"code":"0401","name":"教育学类","majors":[{"code":"040101","name":"教育学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"040102","name":"科学教育","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"040103","name":"人文教育","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"040104","name":"教育技术学","isSpecial":false,"isControlled":false,"note":"可授教育学或理学或工学学士学位","intro":null},{"code":"040105","name":"艺术教育","isSpecial":false,"isControlled":false,"note":"可授教育学或艺术学学士学位","intro":null},{"code":"040106","name":"学前教育","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"040107","name":"小学教育","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"040108","name":"特殊教育","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"040109T","name":"华文教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"040110TK","name":"教育康复学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"040111T","name":"卫生教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"040112T","name":"认知科学与技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"040113T","name":"融合教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"040114TK","name":"劳动教育","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"040115T","name":"家庭教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"040116TK","name":"孤独症儿童教育","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"040117TK","name":"人工智能教育","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"040118T","name":"婴幼儿发展与健康管理","isSpecial":true,"isControlled":false,"note":"可授教育学或管理学学士学位","intro":null}]},{"code":"0402","name":"体育学类","majors":[{"code":"040201","name":"体育教育","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"040202K","name":"运动训练","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"040203","name":"社会体育指导与管理","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"040204K","name":"武术与民族传统体育","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"040205","name":"运动人体科学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"040206T","name":"运动康复","isSpecial":true,"isControlled":false,"note":"可授教育学或理学学士学位","intro":null},{"code":"040207T","name":"休闲体育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"040208T","name":"体能训练","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"040209T","name":"冰雪运动","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"040210TK","name":"电子竞技运动与管理","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"040211TK","name":"智能体育工程","isSpecial":true,"isControlled":true,"note":"可授教育学或工学学士学位","intro":null},{"code":"040212TK","name":"体育旅游","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"040213T","name":"运动能力开发","isSpecial":true,"isControlled":false,"note":"可授教育学或理学学士学位","intro":null},{"code":"040214TK","name":"足球运动","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"040215TK","name":"马术运动与管理","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"040216T","name":"体育康养","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"040217TK","name":"航空运动","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"040218TK","name":"太极拳","isSpecial":true,"isControlled":true,"note":null,"intro":null}]}]},{"code":"05","name":"文学","classes":[{"code":"0501","name":"中国语言文学类","majors":[{"code":"050101","name":"汉语言文学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050102","name":"汉语言","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050103","name":"汉语国际教育","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050104","name":"中国少数民族语言文学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050105","name":"古典文献学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050106T","name":"应用语言学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050107T","name":"秘书学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050108T","name":"中国语言与文化","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050109T","name":"手语翻译","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050110T","name":"数字人文","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050111T","name":"中国古典学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050112T","name":"汉学与中国学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050113T","name":"应用中文","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050114TK","name":"语言科学","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0502","name":"外国语言文学类","majors":[{"code":"050201","name":"英语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050202","name":"俄语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050203","name":"德语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050204","name":"法语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050205","name":"西班牙语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050206","name":"阿拉伯语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050207","name":"日语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050208","name":"波斯语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050209","name":"朝鲜语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050210","name":"菲律宾语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050211","name":"梵语巴利语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050212","name":"印度尼西亚语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050213","name":"印地语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050214","name":"柬埔寨语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050215","name":"老挝语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050216","name":"缅甸语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050217","name":"马来语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050218","name":"蒙古语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050219","name":"僧伽罗语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050220","name":"泰语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050221","name":"乌尔都语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050222","name":"希伯来语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050223","name":"越南语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050224","name":"豪萨语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050225","name":"斯瓦希里语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050226","name":"阿尔巴尼亚语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050227","name":"保加利亚语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050228","name":"波兰语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050229","name":"捷克语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050230","name":"斯洛伐克语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050231","name":"罗马尼亚语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050232","name":"葡萄牙语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050233","name":"瑞典语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050234","name":"塞尔维亚语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050235","name":"土耳其语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050236","name":"希腊语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050237","name":"匈牙利语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050238","name":"意大利语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050239","name":"泰米尔语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050240","name":"普什图语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050241","name":"世界语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050242","name":"孟加拉语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050243","name":"尼泊尔语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050244","name":"克罗地亚语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050245","name":"荷兰语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050246","name":"芬兰语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050247","name":"乌克兰语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050248","name":"挪威语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050249","name":"丹麦语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050250","name":"冰岛语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050251","name":"爱尔兰语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050252","name":"拉脱维亚语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050253","name":"立陶宛语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050254","name":"斯洛文尼亚语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050255","name":"爱沙尼亚语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050256","name":"马耳他语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050257","name":"哈萨克语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050258","name":"乌兹别克语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050259","name":"祖鲁语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050260","name":"拉丁语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050261","name":"翻译","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050262","name":"商务英语","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050263T","name":"阿姆哈拉语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050264T","name":"吉尔吉斯语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050265T","name":"索马里语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050266T","name":"土库曼语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050267T","name":"加泰罗尼亚语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050268T","name":"约鲁巴语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050269T","name":"亚美尼亚语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050270T","name":"马达加斯加语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050271T","name":"格鲁吉亚语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050272T","name":"阿塞拜疆语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050273T","name":"阿非利卡语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050274T","name":"马其顿语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050275T","name":"塔吉克语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050276T","name":"茨瓦纳语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050277T","name":"恩德贝莱语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050278T","name":"科摩罗语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050279T","name":"克里奥尔语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050280T","name":"绍纳语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050281T","name":"提格雷尼亚语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050282T","name":"白俄罗斯语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050283T","name":"毛利语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050284T","name":"汤加语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050285T","name":"萨摩亚语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050286T","name":"库尔德语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050287T","name":"比斯拉马语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050288T","name":"达里语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050289T","name":"德顿语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050290T","name":"迪维希语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050291T","name":"斐济语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050292T","name":"库克群岛毛利语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050293T","name":"隆迪语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050294T","name":"卢森堡语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050295T","name":"卢旺达语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050296T","name":"纽埃语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050297T","name":"皮金语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050298T","name":"切瓦语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050299T","name":"塞苏陀语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050200T","name":"桑戈语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"0502100T","name":"语言学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"0502101T","name":"塔玛齐格特语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"0502102T","name":"爪哇语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"0502103T","name":"旁遮普语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"0502104TK","name":"区域国别学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"0502105T","name":"法律英语","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"0502106TK","name":"计算语言学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"0502107TK","name":"语言智能","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0503","name":"新闻传播学类","majors":[{"code":"050301","name":"新闻学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050302","name":"广播电视学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050303","name":"广告学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050304","name":"传播学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050305","name":"编辑出版学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"050306T","name":"网络与新媒体","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050307T","name":"数字出版","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050308T","name":"时尚传播","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050309T","name":"国际新闻与传播","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"050310T","name":"会展","isSpecial":true,"isControlled":false,"note":"可授文学或管理学学士学位","intro":null}]}]},{"code":"06","name":"历史学","classes":[{"code":"0601","name":"历史学类","majors":[{"code":"060101","name":"历史学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"060102","name":"世界史","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"060103","name":"考古学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"060104","name":"文物与博物馆学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"060105T","name":"文物保护技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"060106T","name":"外国语言与外国历史","isSpecial":true,"isControlled":false,"note":"可授历史学或文学学士学位","intro":null},{"code":"060107T","name":"文化遗产","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"060108T","name":"古文字学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"060109T","name":"科学史","isSpecial":true,"isControlled":false,"note":null,"intro":null}]}]},{"code":"07","name":"理学","classes":[{"code":"0701","name":"数学类","majors":[{"code":"070101","name":"数学与应用数学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"070102","name":"信息与计算科学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"070103T","name":"数理基础科学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"070104T","name":"数据计算及应用","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"070105TK","name":"智能计算","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0702","name":"物理学类","majors":[{"code":"070201","name":"物理学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"070202","name":"应用物理学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"070203","name":"核物理","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"070204T","name":"声学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"070205T","name":"系统科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"070206T","name":"量子信息科学","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0703","name":"化学类","majors":[{"code":"070301","name":"化学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"070302","name":"应用化学","isSpecial":false,"isControlled":false,"note":"可授理学或工学学士学位","intro":null},{"code":"070303T","name":"化学生物学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"070304T","name":"分子科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"070305T","name":"能源化学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"070306T","name":"化学测量学与技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"070307T","name":"资源化学","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0704","name":"天文学类","majors":[{"code":"070401","name":"天文学","isSpecial":false,"isControlled":false,"note":null,"intro":null}]},{"code":"0705","name":"地理科学类","majors":[{"code":"070501","name":"地理科学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"070502","name":"自然地理与资源环境","isSpecial":false,"isControlled":false,"note":"可授理学或管理学学士学位","intro":null},{"code":"070503","name":"人文地理与城乡规划","isSpecial":false,"isControlled":false,"note":"可授理学或管理学学士学位","intro":null},{"code":"070504","name":"地理信息科学","isSpecial":false,"isControlled":false,"note":null,"intro":null}]},{"code":"0706","name":"大气科学类","majors":[{"code":"070601","name":"大气科学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"070602","name":"应用气象学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"070603T","name":"气象技术与工程","isSpecial":true,"isControlled":false,"note":"可授理学或工学学士学位","intro":null},{"code":"070604T","name":"地球系统科学","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0707","name":"海洋科学类","majors":[{"code":"070701","name":"海洋科学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"070702","name":"海洋技术","isSpecial":false,"isControlled":false,"note":"可授理学或工学学士学位","intro":null},{"code":"070703T","name":"海洋资源与环境","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"070704T","name":"军事海洋学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"070705T","name":"海洋科学与技术","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0708","name":"地球物理学类","majors":[{"code":"070801","name":"地球物理学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"070802","name":"空间科学与技术","isSpecial":false,"isControlled":false,"note":"可授理学或工学学士学位","intro":null},{"code":"070803T","name":"防灾减灾科学与工程","isSpecial":true,"isControlled":false,"note":"授予工学学士学位","intro":null},{"code":"070804TK","name":"行星科学","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0709","name":"地质学类","majors":[{"code":"070901","name":"地质学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"070902","name":"地球化学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"070903T","name":"地球信息科学与技术","isSpecial":true,"isControlled":false,"note":"可授理学或工学学士学位","intro":null},{"code":"070904T","name":"古生物学","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0710","name":"生物科学类","majors":[{"code":"071001","name":"生物科学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"071002","name":"生物技术","isSpecial":false,"isControlled":false,"note":"可授理学或工学学士学位","intro":null},{"code":"071003","name":"生物信息学","isSpecial":false,"isControlled":false,"note":"可授理学或工学学士学位","intro":null},{"code":"071004","name":"生态学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"071005T","name":"整合科学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"071006T","name":"神经科学","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0711","name":"心理学类","majors":[{"code":"071101","name":"心理学","isSpecial":false,"isControlled":false,"note":"可授理学或教育学学士学位","intro":null},{"code":"071102","name":"应用心理学","isSpecial":false,"isControlled":false,"note":"可授理学或教育学学士学位","intro":null},{"code":"071103TK","name":"心理、脑与认知科学","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0712","name":"统计学类","majors":[{"code":"071201","name":"统计学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"071202","name":"应用统计学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"071203T","name":"数据科学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"071204T","name":"生物统计学","isSpecial":true,"isControlled":false,"note":null,"intro":null}]}]},{"code":"08","name":"工学","classes":[{"code":"0801","name":"力学类","majors":[{"code":"080101","name":"理论与应用力学","isSpecial":false,"isControlled":false,"note":"可授工学或理学学士学位","intro":null},{"code":"080102","name":"工程力学","isSpecial":false,"isControlled":false,"note":null,"intro":null}]},{"code":"0802","name":"机械类","majors":[{"code":"080201","name":"机械工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080202","name":"机械设计制造及其自动化","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080203","name":"材料成型及控制工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080204","name":"机械电子工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080205","name":"工业设计","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080206","name":"过程装备与控制工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080207","name":"车辆工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080208","name":"汽车服务工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080209T","name":"机械工艺技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080210T","name":"微机电系统工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080211T","name":"机电技术教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080212T","name":"汽车维修工程教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080213T","name":"智能制造工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080214T","name":"智能车辆工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080215T","name":"仿生科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080216T","name":"新能源汽车工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080217T","name":"增材制造工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080218T","name":"智能交互设计","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080219T","name":"应急装备技术与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080220T","name":"农林智能装备工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080221T","name":"真空工程与技术","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0803","name":"仪器类","majors":[{"code":"080301","name":"测控技术与仪器","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080302T","name":"精密仪器","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080303T","name":"智能感知工程","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0804","name":"材料类","majors":[{"code":"080401","name":"材料科学与工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080402","name":"材料物理","isSpecial":false,"isControlled":false,"note":"可授工学或理学学士学位","intro":null},{"code":"080403","name":"材料化学","isSpecial":false,"isControlled":false,"note":"可授工学或理学学士学位","intro":null},{"code":"080404","name":"冶金工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080405","name":"金属材料工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080406","name":"无机非金属材料工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080407","name":"高分子材料与工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080408","name":"复合材料与工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080409T","name":"粉体材料科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080410T","name":"宝石及材料工艺学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080411T","name":"焊接技术与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080412T","name":"功能材料","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080413T","name":"纳米材料与技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080414T","name":"新能源材料与器件","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080415T","name":"材料设计科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080416T","name":"复合材料成型工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080417T","name":"智能材料与结构","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080418T","name":"光电信息材料与器件","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080419T","name":"生物材料","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080420T","name":"材料智能技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080421T","name":"电子信息材料","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080422T","name":"软物质科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080423T","name":"稀土材料科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0805","name":"能源动力类","majors":[{"code":"080501","name":"能源与动力工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080502T","name":"能源与环境系统工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080503T","name":"新能源科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080504T","name":"储能科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080505T","name":"能源服务工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080506TK","name":"氢能科学与工程","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"080507TK","name":"可持续能源","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"080508T","name":"能源科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0806","name":"电气类","majors":[{"code":"080601","name":"电气工程及其自动化","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080602T","name":"智能电网信息工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080603T","name":"光源与照明","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080604T","name":"电气工程与智能控制","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080605T","name":"电机电器智能化","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080606T","name":"电缆工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080607T","name":"能源互联网工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080608TK","name":"智慧能源工程","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"080609T","name":"电动载运工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080610TK","name":"大功率半导体科学与工程","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0807","name":"电子信息类","majors":[{"code":"080701","name":"电子信息工程","isSpecial":false,"isControlled":false,"note":"可授工学或理学学士学位","intro":null},{"code":"080702","name":"电子科学与技术","isSpecial":false,"isControlled":false,"note":"可授工学或理学学士学位","intro":null},{"code":"080703","name":"通信工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080704","name":"微电子科学与工程","isSpecial":false,"isControlled":false,"note":"可授工学或理学学士学位","intro":null},{"code":"080705","name":"光电信息科学与工程","isSpecial":false,"isControlled":false,"note":"可授工学或理学学士学位","intro":null},{"code":"080706","name":"信息工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080707T","name":"广播电视工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080708T","name":"水声工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080709T","name":"电子封装技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080710T","name":"集成电路设计与集成系统","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080711T","name":"医学信息工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080712T","name":"电磁场与无线技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080713T","name":"电波传播与天线","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080714T","name":"电子信息科学与技术","isSpecial":true,"isControlled":false,"note":"可授工学或理学学士学位","intro":null},{"code":"080715T","name":"电信工程及管理","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080716T","name":"应用电子技术教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080717T","name":"人工智能","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080718T","name":"海洋信息工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080719T","name":"柔性电子学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080720T","name":"智能测控工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080721T","name":"智能视觉工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080722T","name":"智能视听工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080723TK","name":"半导体工艺与装备","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0808","name":"自动化类","majors":[{"code":"080801","name":"自动化","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080802T","name":"轨道交通信号与控制","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080803T","name":"机器人工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080804T","name":"邮政工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080805T","name":"核电技术与控制工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080806T","name":"智能装备与系统","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080807T","name":"工业智能","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080808T","name":"智能工程与创意设计","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0809","name":"计算机类","majors":[{"code":"080901","name":"计算机科学与技术","isSpecial":false,"isControlled":false,"note":"可授工学或理学学士学位","intro":null},{"code":"080902","name":"软件工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080903","name":"网络工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080904K","name":"信息安全","isSpecial":false,"isControlled":true,"note":"可授工学或理学或管理学学士学位","intro":null},{"code":"080905","name":"物联网工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080906","name":"数字媒体技术","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"080907T","name":"智能科学与技术","isSpecial":true,"isControlled":false,"note":"可授工学或理学学士学位","intro":null},{"code":"080908T","name":"空间信息与数字技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080909T","name":"电子与计算机工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080910T","name":"数据科学与大数据技术","isSpecial":true,"isControlled":false,"note":"可授工学或理学学士学位","intro":null},{"code":"080911TK","name":"网络空间安全","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"080912T","name":"新媒体技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080913T","name":"电影制作","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080914TK","name":"保密技术","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"080915T","name":"服务科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080916T","name":"虚拟现实技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080917T","name":"区块链工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"080918TK","name":"密码科学与技术","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"080919T","name":"工业软件","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0810","name":"土木类","majors":[{"code":"081001","name":"土木工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081002","name":"建筑环境与能源应用工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081003","name":"给排水科学与工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081004","name":"建筑电气与智能化","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081005T","name":"城市地下空间工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081006T","name":"道路桥梁与渡河工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081007T","name":"铁道工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081008T","name":"智能建造","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081009T","name":"土木、水利与海洋工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081010T","name":"土木、水利与交通工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081011T","name":"城市水系统工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081012T","name":"智能建造与智慧交通","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081013T","name":"工程软件","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081014T","name":"城市更新","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0811","name":"水利类","majors":[{"code":"081101","name":"水利水电工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081102","name":"水文与水资源工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081103","name":"港口航道与海岸工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081104T","name":"水务工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081105T","name":"水利科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081106T","name":"智慧水利","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0812","name":"测绘类","majors":[{"code":"081201","name":"测绘工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081202","name":"遥感科学与技术","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081203T","name":"导航工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081204T","name":"地理国情监测","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081205T","name":"地理空间信息工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081206TK","name":"时空信息工程","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0813","name":"化工与制药类","majors":[{"code":"081301","name":"化学工程与工艺","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081302","name":"制药工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081303T","name":"资源循环科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081304T","name":"能源化学工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081305T","name":"化学工程与工业生物工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081306T","name":"化工安全工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081307T","name":"涂料工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081308T","name":"精细化工","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081309T","name":"智能分子工程","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0814","name":"地质类","majors":[{"code":"081401","name":"地质工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081402","name":"勘查技术与工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081403K","name":"资源勘查工程","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"081404T","name":"地下水科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081405T","name":"旅游地学与规划工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081406T","name":"智能地球探测","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081407T","name":"资源环境大数据工程","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0815","name":"矿业类","majors":[{"code":"081501","name":"采矿工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081502","name":"石油工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081503","name":"矿物加工工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081504","name":"油气储运工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081505T","name":"矿物资源工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081506T","name":"海洋油气工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081507T","name":"智能采矿工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081508TK","name":"碳储科学与工程","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"081509TK","name":"稀土科学与工程","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0816","name":"纺织类","majors":[{"code":"081601","name":"纺织工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081602","name":"服装设计与工程","isSpecial":false,"isControlled":false,"note":"可授工学或艺术学学士学位","intro":null},{"code":"081603T","name":"非织造材料与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081604T","name":"服装设计与工艺教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081605T","name":"丝绸设计与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081606T","name":"纤维科学与智能制造","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0817","name":"轻工类","majors":[{"code":"081701","name":"轻化工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081702","name":"包装工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081703","name":"印刷工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081704T","name":"香料香精技术与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081705T","name":"化妆品技术与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081706TK","name":"生物质能源与材料","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"081707T","name":"生物质技术与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0818","name":"交通运输类","majors":[{"code":"081801","name":"交通运输","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081802","name":"交通工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081803K","name":"航海技术","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"081804K","name":"轮机工程","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"081805K","name":"飞行技术","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"081806T","name":"交通设备与控制工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081807T","name":"救助与打捞工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081808TK","name":"船舶电子电气工程","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"081809T","name":"轨道交通电气与控制","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081810T","name":"邮轮工程与管理","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081811T","name":"智慧交通","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081812T","name":"智能运输工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081813T","name":"交通能源融合工程","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0819","name":"海洋工程类","majors":[{"code":"081901","name":"船舶与海洋工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"081902T","name":"海洋工程与技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081903T","name":"海洋资源开发技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081904T","name":"海洋机器人","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081905T","name":"智慧海洋技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081906T","name":"智能海洋装备","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"081907T","name":"海洋智能与无人技术","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0820","name":"航空航天类","majors":[{"code":"082001","name":"航空航天工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082002","name":"飞行器设计与工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082003","name":"飞行器制造工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082004","name":"飞行器动力工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082005","name":"飞行器环境与生命保障工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082006T","name":"飞行器质量与可靠性","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082007T","name":"飞行器适航技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082008T","name":"飞行器控制与信息工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082009T","name":"无人驾驶航空器系统工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082010T","name":"智能飞行器技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082011T","name":"空天智能电推进技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082012T","name":"飞行器运维工程","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0821","name":"兵器类","majors":[{"code":"082101","name":"武器系统与工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082102","name":"武器发射工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082103","name":"探测制导与控制技术","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082104","name":"弹药工程与爆炸技术","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082105","name":"特种能源技术与工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082106","name":"装甲车辆工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082107","name":"信息对抗技术","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082108T","name":"智能无人系统技术","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0822","name":"核工程类","majors":[{"code":"082201","name":"核工程与核技术","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082202","name":"辐射防护与核安全","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082203","name":"工程物理","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082204","name":"核化工与核燃料工程","isSpecial":false,"isControlled":false,"note":null,"intro":null}]},{"code":"0823","name":"农业工程类","majors":[{"code":"082301","name":"农业工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082302","name":"农业机械化及其自动化","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082303","name":"农业电气化","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082304","name":"农业建筑环境与能源工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082305","name":"农业水利工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082306T","name":"土地整治工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082307T","name":"农业智能装备工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082308T","name":"农业机器人","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0824","name":"林业工程类","majors":[{"code":"082401","name":"森林工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082402","name":"木材科学与工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082403","name":"林产化工","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082404T","name":"家具设计与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082405T","name":"木结构建筑与材料","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0825","name":"环境科学与工程类","majors":[{"code":"082501","name":"环境科学与工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082502","name":"环境工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082503","name":"环境科学","isSpecial":false,"isControlled":false,"note":"可授工学或理学学士学位","intro":null},{"code":"082504","name":"环境生态工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082505T","name":"环保设备工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082506T","name":"资源环境科学","isSpecial":true,"isControlled":false,"note":"可授工学或理学学士学位","intro":null},{"code":"082507T","name":"水质科学与技术","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0826","name":"生物医学工程类","majors":[{"code":"082601","name":"生物医学工程","isSpecial":false,"isControlled":false,"note":"可授工学或理学学士学位","intro":null},{"code":"082602T","name":"假肢矫形工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082603T","name":"临床工程技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082604T","name":"康复工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082605T","name":"健康科学与技术","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0827","name":"食品科学与工程类","majors":[{"code":"082701","name":"食品科学与工程","isSpecial":false,"isControlled":false,"note":"可授工学或农学学士学位","intro":null},{"code":"082702","name":"食品质量与安全","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082703","name":"粮食工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082704","name":"乳品工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082705","name":"酿酒工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082706T","name":"葡萄与葡萄酒工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082707T","name":"食品营养与检验教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082708T","name":"烹饪与营养教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082709T","name":"食品安全与检测","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082710T","name":"食品营养与健康","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082711T","name":"食用菌科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082712T","name":"白酒酿造工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082713T","name":"咖啡科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0828","name":"建筑类","majors":[{"code":"082801","name":"建筑学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082802","name":"城乡规划","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082803","name":"风景园林","isSpecial":false,"isControlled":false,"note":"可授工学或艺术学学士学位","intro":null},{"code":"082804T","name":"历史建筑保护工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082805T","name":"人居环境科学与技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082806T","name":"城市设计","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082807T","name":"智慧建筑与建造","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082808T","name":"智慧景观营造","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0829","name":"安全科学与工程类","majors":[{"code":"082901","name":"安全工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"082902T","name":"应急技术与管理","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082903T","name":"职业卫生工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082904T","name":"安全生产监管","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"082905TK","name":"智慧应急","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0830","name":"生物工程类","majors":[{"code":"083001","name":"生物工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"083002T","name":"生物制药","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"083003T","name":"合成生物学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"083004T","name":"生物制造","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0831","name":"公安技术类","majors":[{"code":"083101K","name":"刑事科学技术","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"083102K","name":"消防工程","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"083103TK","name":"交通管理工程","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"083104TK","name":"安全防范工程","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"083105TK","name":"公安视听技术","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"083106TK","name":"抢险救援指挥与技术","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"083107TK","name":"火灾勘查","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"083108TK","name":"网络安全与执法","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"083109TK","name":"核生化消防","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"083110TK","name":"海警舰艇指挥与技术","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"083111TK","name":"数据警务技术","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"083112TK","name":"食品药品环境犯罪侦查技术","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"083113TK","name":"低空安全管理","isSpecial":true,"isControlled":true,"note":null,"intro":null}]}]},{"code":"09","name":"农学","classes":[{"code":"0901","name":"植物生产类","majors":[{"code":"090101","name":"农学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090102","name":"园艺","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090103","name":"植物保护","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090104","name":"植物科学与技术","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090105","name":"种子科学与工程","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090106","name":"设施农业科学与工程","isSpecial":false,"isControlled":false,"note":"可授农学或工学学士学位","intro":null},{"code":"090107T","name":"茶学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090108T","name":"烟草","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090109T","name":"应用生物科学","isSpecial":true,"isControlled":false,"note":"可授农学或理学学士学位","intro":null},{"code":"090110T","name":"农艺教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090111T","name":"园艺教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090112T","name":"智慧农业","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090113T","name":"菌物科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090114T","name":"农药化肥","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090115T","name":"生物农药科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090116TK","name":"生物育种科学","isSpecial":true,"isControlled":true,"note":"授予理学学士学位","intro":null},{"code":"090117TK","name":"生物育种技术","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0902","name":"自然保护与环境生态类","majors":[{"code":"090201","name":"农业资源与环境","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090202","name":"野生动物与自然保护区管理","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090203","name":"水土保持与荒漠化防治","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090204T","name":"生物质科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090205T","name":"土地科学与技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090206T","name":"湿地保护与恢复","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090207TK","name":"国家公园建设与管理","isSpecial":true,"isControlled":true,"note":"可授农学或管理学学士学位","intro":null},{"code":"090208TK","name":"生态修复学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"090209T","name":"盐碱地科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0903","name":"动物生产类","majors":[{"code":"090301","name":"动物科学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090302T","name":"蚕学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090303T","name":"蜂学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090304T","name":"经济动物学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090305T","name":"马业科学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090306T","name":"饲料工程","isSpecial":true,"isControlled":false,"note":"可授农学或工学学士学位","intro":null},{"code":"090307T","name":"智慧牧业科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0904","name":"动物医学类","majors":[{"code":"090401","name":"动物医学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090402","name":"动物药学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090403T","name":"动植物检疫","isSpecial":true,"isControlled":false,"note":"可授农学或理学学士学位","intro":null},{"code":"090404T","name":"实验动物学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090405T","name":"中兽医学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090406TK","name":"兽医公共卫生","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"0905","name":"林学类","majors":[{"code":"090501","name":"林学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090502","name":"园林","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090503","name":"森林保护","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090504T","name":"经济林","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090505T","name":"智慧林业","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0906","name":"水产类","majors":[{"code":"090601","name":"水产养殖学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090602","name":"海洋渔业科学与技术","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090603T","name":"水族科学与技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"090604TK","name":"水生动物医学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"090605T","name":"智慧渔业","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"0907","name":"草学类","majors":[{"code":"090701","name":"草业科学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"090702T","name":"草坪科学与工程","isSpecial":true,"isControlled":false,"note":null,"intro":null}]}]},{"code":"10","name":"医学","classes":[{"code":"1001","name":"基础医学类","majors":[{"code":"100101K","name":"基础医学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"100102TK","name":"生物医学","isSpecial":true,"isControlled":true,"note":"授予理学学士学位","intro":null},{"code":"100103T","name":"生物医学科学","isSpecial":true,"isControlled":false,"note":"授予理学学士学位","intro":null}]},{"code":"1002","name":"临床医学类","majors":[{"code":"100201K","name":"临床医学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"100202TK","name":"麻醉学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"100203TK","name":"医学影像学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"100204TK","name":"眼视光医学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"100205TK","name":"精神医学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"100206TK","name":"放射医学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"100207TK","name":"儿科学","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"1003","name":"口腔医学类","majors":[{"code":"100301K","name":"口腔医学","isSpecial":false,"isControlled":true,"note":null,"intro":null}]},{"code":"1004","name":"公共卫生与预防医学类","majors":[{"code":"100401K","name":"预防医学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"100402","name":"食品卫生与营养学","isSpecial":false,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"100403TK","name":"妇幼保健医学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"100404TK","name":"卫生监督","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"100405TK","name":"全球健康学","isSpecial":true,"isControlled":true,"note":"授予理学学士学位","intro":null},{"code":"100406T","name":"运动与公共健康","isSpecial":true,"isControlled":false,"note":"授予理学学士学位","intro":null}]},{"code":"1005","name":"中医学类","majors":[{"code":"100501K","name":"中医学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"100502K","name":"针灸推拿学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"100503K","name":"藏医学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"100504K","name":"蒙医学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"100505K","name":"维医学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"100506K","name":"壮医学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"100507K","name":"哈医学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"100508TK","name":"傣医学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"100509TK","name":"回医学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"100510TK","name":"中医康复学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"100511TK","name":"中医养生学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"100512TK","name":"中医儿科学","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"100513TK","name":"中医骨伤科学","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"1006","name":"中西医结合类","majors":[{"code":"100601K","name":"中西医临床医学","isSpecial":false,"isControlled":true,"note":null,"intro":null}]},{"code":"1007","name":"药学类","majors":[{"code":"100701","name":"药学","isSpecial":false,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"100702","name":"药物制剂","isSpecial":false,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"100703TK","name":"临床药学","isSpecial":true,"isControlled":true,"note":"授予理学学士学位","intro":null},{"code":"100704T","name":"药事管理","isSpecial":true,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"100705T","name":"药物分析","isSpecial":true,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"100706T","name":"药物化学","isSpecial":true,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"100707T","name":"海洋药学","isSpecial":true,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"100708T","name":"化妆品科学与技术","isSpecial":true,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"100709TK","name":"药物经济与管理","isSpecial":true,"isControlled":true,"note":"授予管理学学士学位","intro":null}]},{"code":"1008","name":"中药学类","majors":[{"code":"100801","name":"中药学","isSpecial":false,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"100802","name":"中药资源与开发","isSpecial":false,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"100803T","name":"藏药学","isSpecial":true,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"100804T","name":"蒙药学","isSpecial":true,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"100805T","name":"中药制药","isSpecial":true,"isControlled":false,"note":"可授理学或工学学士学位","intro":null},{"code":"100806T","name":"中草药栽培与鉴定","isSpecial":true,"isControlled":false,"note":"授予理学学士学位","intro":null}]},{"code":"1009","name":"法医学类","majors":[{"code":"100901K","name":"法医学","isSpecial":false,"isControlled":true,"note":null,"intro":null}]},{"code":"1010","name":"医学技术类","majors":[{"code":"101001","name":"医学检验技术","isSpecial":false,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"101002","name":"医学实验技术","isSpecial":false,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"101003","name":"医学影像技术","isSpecial":false,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"101004","name":"眼视光学","isSpecial":false,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"101005","name":"康复治疗学","isSpecial":false,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"101006","name":"口腔医学技术","isSpecial":false,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"101007","name":"卫生检验与检疫","isSpecial":false,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"101008T","name":"听力与言语康复学","isSpecial":true,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"101009T","name":"康复物理治疗","isSpecial":true,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"101010T","name":"康复作业治疗","isSpecial":true,"isControlled":false,"note":"授予理学学士学位","intro":null},{"code":"101016TK","name":"健康与医疗保障","isSpecial":true,"isControlled":true,"note":"授予管理学学士学位","intro":null},{"code":"101017TK","name":"老年医学与健康","isSpecial":true,"isControlled":true,"note":"授予管理学学士学位","intro":null},{"code":"101018TK","name":"核医学工程","isSpecial":true,"isControlled":true,"note":"授予工学学士学位","intro":null}]},{"code":"1011","name":"护理学类","majors":[{"code":"101101K","name":"护理学","isSpecial":false,"isControlled":true,"note":"授予理学学士学位","intro":null},{"code":"101102TK","name":"助产学","isSpecial":true,"isControlled":true,"note":"授予理学学士学位","intro":null}]}]},{"code":"12","name":"管理学","classes":[{"code":"1201","name":"管理科学与工程类","majors":[{"code":"120101","name":"管理科学","isSpecial":false,"isControlled":false,"note":"可授管理学或理学学士学位","intro":null},{"code":"120102","name":"信息管理与信息系统","isSpecial":false,"isControlled":false,"note":"可授管理学或工学学士学位","intro":null},{"code":"120103","name":"工程管理","isSpecial":false,"isControlled":false,"note":"可授管理学或工学学士学位","intro":null},{"code":"120104","name":"房地产开发与管理","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120105","name":"工程造价","isSpecial":false,"isControlled":false,"note":"可授管理学或工学学士学位","intro":null},{"code":"120106TK","name":"保密管理","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"120107T","name":"邮政管理","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120108T","name":"大数据管理与应用","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120109T","name":"工程审计","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120110T","name":"计算金融","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120111T","name":"应急管理","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"1202","name":"工商管理类","majors":[{"code":"120201K","name":"工商管理","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"120202","name":"市场营销","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120203K","name":"会计学","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"120204","name":"财务管理","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120205","name":"国际商务","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120206","name":"人力资源管理","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120207","name":"审计学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120208","name":"资产评估","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120209","name":"物业管理","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120210","name":"文化产业管理","isSpecial":false,"isControlled":false,"note":"可授管理学或艺术学学士学位","intro":null},{"code":"120211T","name":"劳动关系","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120212T","name":"体育经济与管理","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120213T","name":"财务会计教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120214T","name":"市场营销教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120215T","name":"零售业管理","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120216T","name":"创业管理","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120217TK","name":"海关稽查","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"120218T","name":"内部审计","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120219TK","name":"商业人工智能","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"1203","name":"农业经济管理类","majors":[{"code":"120301","name":"农林经济管理","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120302","name":"农村区域发展","isSpecial":false,"isControlled":false,"note":"可授管理学或农学学士学位","intro":null},{"code":"120303TK","name":"乡村治理","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"1204","name":"公共管理类","majors":[{"code":"120401","name":"公共事业管理","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120402","name":"行政管理","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120403","name":"劳动与社会保障","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120404","name":"土地资源管理","isSpecial":false,"isControlled":false,"note":"可授管理学或工学学士学位","intro":null},{"code":"120405","name":"城市管理","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120406TK","name":"海关管理","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"120407T","name":"交通管理","isSpecial":true,"isControlled":false,"note":"可授管理学或工学学士学位","intro":null},{"code":"120408T","name":"海事管理","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120409T","name":"公共关系学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120410T","name":"健康服务与管理","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120411TK","name":"海警后勤管理","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"120412T","name":"医疗产品管理","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120413T","name":"医疗保险","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120414T","name":"养老服务管理","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120415TK","name":"海关检验检疫安全","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"120416TK","name":"海外安全管理","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"120417T","name":"自然资源登记与管理","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120418T","name":"慈善管理","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120419TK","name":"航空安防管理","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"120420TK","name":"无障碍管理","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"120421TK","name":"人才发展与管理","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"120422TK","name":"数字公共治理","isSpecial":true,"isControlled":true,"note":null,"intro":null}]},{"code":"1205","name":"图书情报与档案管理类","majors":[{"code":"120501","name":"图书馆学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120502","name":"档案学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120503","name":"信息资源管理","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120504T","name":"数据资源与数据智能","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"1206","name":"物流管理与工程类","majors":[{"code":"120601","name":"物流管理","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120602","name":"物流工程","isSpecial":false,"isControlled":false,"note":"可授管理学或工学学士学位","intro":null},{"code":"120603T","name":"采购管理","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120604T","name":"供应链管理","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"1207","name":"工业工程类","majors":[{"code":"120701","name":"工业工程","isSpecial":false,"isControlled":false,"note":"可授管理学或工学学士学位","intro":null},{"code":"120702T","name":"标准化工程","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120703T","name":"质量管理工程","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"1208","name":"电子商务类","majors":[{"code":"120801","name":"电子商务","isSpecial":false,"isControlled":false,"note":"可授管理学或经济学或工学学士学位","intro":null},{"code":"120802T","name":"电子商务及法律","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120803T","name":"跨境电子商务","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"1209","name":"旅游管理类","majors":[{"code":"120901K","name":"旅游管理","isSpecial":false,"isControlled":true,"note":null,"intro":null},{"code":"120902","name":"酒店管理","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120903","name":"会展经济与管理","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"120904T","name":"旅游管理与服务教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"120905TK","name":"国际邮轮管理","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"120906TK","name":"数字文旅","isSpecial":true,"isControlled":true,"note":null,"intro":null}]}]},{"code":"13","name":"艺术学","classes":[{"code":"1301","name":"艺术学理论类","majors":[{"code":"130101","name":"艺术史论","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130102T","name":"艺术管理","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130103T","name":"非物质文化遗产保护","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"1302","name":"音乐与舞蹈学类","majors":[{"code":"130201","name":"音乐表演","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130202","name":"音乐学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130203","name":"作曲与作曲技术理论","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130204","name":"舞蹈表演","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130205","name":"舞蹈学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130206","name":"舞蹈编导","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130207T","name":"舞蹈教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130208TK","name":"航空服务艺术与管理","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"130209T","name":"流行音乐","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130210T","name":"音乐治疗","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130211T","name":"流行舞蹈","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130212T","name":"音乐教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130213TK","name":"冰雪舞蹈表演","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"130214TK","name":"舞蹈治疗","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"130215T","name":"音乐科技","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130216T","name":"乐器智造","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"1303","name":"戏剧与影视学类","majors":[{"code":"130301","name":"表演","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130302","name":"戏剧学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130303","name":"电影学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130304","name":"戏剧影视文学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130305","name":"广播电视编导","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130306","name":"戏剧影视导演","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130307","name":"戏剧影视美术设计","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130308","name":"录音艺术","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130309","name":"播音与主持艺术","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130310","name":"动画","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130311T","name":"影视摄影与制作","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130312T","name":"影视技术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130313T","name":"戏剧教育","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130314TK","name":"曲艺","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"130315TK","name":"音乐剧","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"130316T","name":"数字戏剧","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130317T","name":"数字演艺设计","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130318T","name":"智能影像艺术","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"1304","name":"美术学类","majors":[{"code":"130401","name":"美术学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130402","name":"绘画","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130403","name":"雕塑","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130404","name":"摄影","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130405T","name":"书法学","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130406T","name":"中国画","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130407TK","name":"实验艺术","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"130408TK","name":"跨媒体艺术","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"130409T","name":"文物保护与修复","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130410T","name":"漫画","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130411T","name":"纤维艺术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130412TK","name":"科技艺术","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"130413TK","name":"美术教育","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"130414T","name":"虚拟空间艺术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130415T","name":"艺术治疗","isSpecial":true,"isControlled":false,"note":null,"intro":null}]},{"code":"1305","name":"设计学类","majors":[{"code":"130501","name":"艺术设计学","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130502","name":"视觉传达设计","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130503","name":"环境设计","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130504","name":"产品设计","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130505","name":"服装与服饰设计","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130506","name":"公共艺术","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130507","name":"工艺美术","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130508","name":"数字媒体艺术","isSpecial":false,"isControlled":false,"note":null,"intro":null},{"code":"130509T","name":"艺术与科技","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130510TK","name":"陶瓷艺术设计","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"130511T","name":"新媒体艺术","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130512T","name":"包装设计","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130513TK","name":"珠宝首饰设计与工艺","isSpecial":true,"isControlled":true,"note":null,"intro":null},{"code":"130514T","name":"人居设计","isSpecial":true,"isControlled":false,"note":null,"intro":null},{"code":"130515TK","name":"游戏艺术设计","isSpecial":true,"isControlled":true,"note":null,"intro":null}]}]},{"code":"14","name":"交叉学科","classes":[{"code":"1400","name":"交叉学科类","majors":[{"code":"140001TK","name":"未来机器人","isSpecial":true,"isControlled":true,"note":"原专业代码为083201TK。授予工学学士学位","intro":null},{"code":"140002TK","name":"交叉工程","isSpecial":true,"isControlled":true,"note":"原专业代码为083202TK。授予工学学士学位","intro":null},{"code":"140003TK","name":"低空技术与工程","isSpecial":true,"isControlled":true,"note":"原专业代码为083203TK。授予工学学士学位","intro":null},{"code":"140004TK","name":"集成电路科学与工程","isSpecial":true,"isControlled":true,"note":"原专业代码为083204TK。授予工学学士学位","intro":null},{"code":"140005T","name":"碳中和科学与工程","isSpecial":true,"isControlled":false,"note":"原专业代码为083205T。授予工学学士学位","intro":null},{"code":"140006T","name":"智慧城市与空间规划","isSpecial":true,"isControlled":false,"note":"原专业代码为083206T。授予工学学士学位","intro":null},{"code":"140007T","name":"智能医学工程","isSpecial":true,"isControlled":false,"note":"原专业代码为101011T。授予工学学士学位","intro":null},{"code":"140008T","name":"生物医药数据科学","isSpecial":true,"isControlled":false,"note":"原专业代码为101012T。授予理学学士学位","intro":null},{"code":"140009T","name":"智能影像工程","isSpecial":true,"isControlled":false,"note":"原专业代码为101013T。授予工学学士学位","intro":null},{"code":"140010TK","name":"医工学","isSpecial":true,"isControlled":true,"note":"原专业代码为101014TK。授予工学学士学位","intro":null},{"code":"140011TK","name":"医疗器械与装备工程","isSpecial":true,"isControlled":true,"note":"原专业代码为101015TK。授予工学学士学位","intro":null},{"code":"140012TK","name":"具身智能","isSpecial":true,"isControlled":true,"note":"授予工学学士学位","intro":null},{"code":"140013TK","name":"脑机科学与技术","isSpecial":true,"isControlled":true,"note":"授予工学学士学位","intro":null},{"code":"140014T","name":"工程互联网","isSpecial":true,"isControlled":false,"note":"授予工学学士学位","intro":null},{"code":"140015T","name":"深地科学与工程","isSpecial":true,"isControlled":false,"note":"授予工学学士学位","intro":null}],"synthetic":true}]}]};
+
+</script>
+<script>
+/* 本科专业目录 · 2026 — 前端交互 */
+(function () {
+  "use strict";
+
+  const DATA = window.MAJORS_DATA;
+  if (!DATA) {
+    console.error("MAJORS_DATA 未加载");
+    return;
+  }
+
+  // ---------- 工具 ----------
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+  const escapeHTML = (s) =>
+    String(s ?? "").replace(/[&<>"']/g, (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+    );
+
+  // 高亮：对名字中匹配 query 的子串包裹 <mark>
+  const highlight = (text, q) => {
+    if (!q) return escapeHTML(text);
+    const safe = escapeHTML(text);
+    const safeQ = escapeHTML(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return safe.replace(new RegExp(safeQ, "gi"), (m) => `<mark class="hl">${m}</mark>`);
+  };
+
+  // 扁平化索引，加速搜索
+  const FLAT = [];
+  for (const cat of DATA.categories) {
+    for (const cls of cat.classes) {
+      for (const m of cls.majors) {
+        FLAT.push({
+          ...m,
+          categoryCode: cat.code,
+          categoryName: cat.name,
+          classCode: cls.code,
+          className: cls.name,
+          classSynthetic: !!cls.synthetic,
+        });
+      }
+    }
+  }
+
+  // ---------- 路由 ----------
+  function parseRoute() {
+    const h = (location.hash || "").replace(/^#\/?/, "");
+    if (!h) return { view: "home" };
+    const parts = h.split("/").filter(Boolean);
+    if (parts[0] === "c" && parts[1]) return { view: "category", code: parts[1] };
+    if (parts[0] === "q" && parts.length > 1) {
+      return { view: "search", query: decodeURIComponent(parts.slice(1).join("/")) };
+    }
+    return { view: "home" };
+  }
+
+  function navigate(hash, { replace = false } = {}) {
+    if (replace) history.replaceState(null, "", hash);
+    else if (location.hash === hash) render();
+    else location.hash = hash;
+  }
+
+  // ---------- 渲染 ----------
+  const host = $("#main");
+
+  function clearHost() {
+    host.innerHTML = "";
+  }
+
+  function setTitle(suffix) {
+    const base = "本科专业目录 · 2026 · 教育部";
+    document.title = suffix ? `${suffix} · ${base}` : base;
+  }
+
+  // 首页
+  function renderHome() {
+    clearHost();
+    host.appendChild($("#tpl-home").content.cloneNode(true));
+    setTitle("");
+
+    $("[data-stat=categories]").textContent = DATA.stats.categories;
+    $("[data-stat=classes]").textContent = DATA.stats.classes;
+    $("[data-stat=majors]").textContent = DATA.stats.majors;
+
+    const list = $("#catalog-list");
+    const frag = document.createDocumentFragment();
+    DATA.categories.forEach((cat, idx) => {
+      const count = cat.classes.reduce((s, c) => s + c.majors.length, 0);
+      const li = document.createElement("li");
+      li.style.setProperty("--i", idx);
+      li.innerHTML = `
+        <a class="catalog-item" href="#/c/${cat.code}">
+          <span class="catalog-item__code">${cat.code}</span>
+          <span class="catalog-item__name">${escapeHTML(cat.name)}</span>
+          <span class="catalog-item__dots" aria-hidden="true"></span>
+          <span class="catalog-item__count"><em>${count}</em>本科专业</span>
+        </a>`;
+      frag.appendChild(li);
+    });
+    list.appendChild(frag);
+  }
+
+  // 门类页
+  function renderCategory(code) {
+    const cat = DATA.categories.find((c) => c.code === code);
+    if (!cat) return navigate("");
+
+    clearHost();
+    host.appendChild($("#tpl-category").content.cloneNode(true));
+    setTitle(`${cat.code} ${cat.name}`);
+
+    $("[data-breadcrumb-current]").textContent = cat.name;
+    $("[data-cat-code]").textContent = cat.code;
+    $("[data-cat-name]").textContent = cat.name;
+
+    const realClasses = cat.classes.filter((c) => !c.synthetic);
+    const totalMajors = cat.classes.reduce((s, c) => s + c.majors.length, 0);
+    $("[data-cat-class-count]").textContent = realClasses.length || cat.classes.length;
+    $("[data-cat-major-count]").textContent = totalMajors;
+
+    // TOC
+    const toc = $("[data-cat-toc]");
+    const tocFrag = document.createDocumentFragment();
+    for (const cls of cat.classes) {
+      const li = document.createElement("li");
+      const label = cls.synthetic ? "直辖专业" : escapeHTML(cls.name);
+      const num = cls.synthetic ? "·" : cls.code;
+      li.innerHTML = `
+        <a href="#cls-${cls.code}" data-toc-target="cls-${cls.code}">
+          <span class="cat-toc__num">${num}</span>
+          <span>${label}</span>
+        </a>`;
+      tocFrag.appendChild(li);
+    }
+    toc.appendChild(tocFrag);
+
+    // 内容
+    const content = $("[data-cat-content]");
+    const contentFrag = document.createDocumentFragment();
+    for (const cls of cat.classes) {
+      const sec = document.createElement("section");
+      sec.className = "cls-block";
+      sec.id = `cls-${cls.code}`;
+
+      const head = document.createElement("div");
+      head.className = "cls-block__head";
+      if (cls.synthetic) {
+        head.innerHTML = `
+          <h2 class="cls-block__name">本门类直辖专业</h2>
+          <span class="cls-block__count">${cls.majors.length} 个本科专业</span>`;
+      } else {
+        head.innerHTML = `
+          <span class="cls-block__code">${cls.code}</span>
+          <h2 class="cls-block__name">${escapeHTML(cls.name)}</h2>
+          <span class="cls-block__count">${cls.majors.length} 个本科专业</span>`;
+      }
+      sec.appendChild(head);
+
+      const grid = document.createElement("ul");
+      grid.className = "major-grid";
+      for (const m of cls.majors) {
+        const li = document.createElement("li");
+        li.appendChild(majorButton(m, cat, cls));
+        grid.appendChild(li);
+      }
+      sec.appendChild(grid);
+      contentFrag.appendChild(sec);
+    }
+    content.appendChild(contentFrag);
+
+    setupTocObserver();
+
+    // 平滑滚动锚点
+    toc.addEventListener("click", (e) => {
+      const a = e.target.closest("a[data-toc-target]");
+      if (!a) return;
+      const target = document.getElementById(a.dataset.tocTarget);
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  // 单条专业按钮
+  function majorButton(m, cat, cls, opts = {}) {
+    const { query = "", showPath = false } = opts;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "major";
+    btn.dataset.majorCode = m.code;
+
+    const tags = [];
+    if (m.isSpecial) tags.push('<em class="tag tag--T" aria-label="特设专业">T</em>');
+    if (m.isControlled) tags.push('<em class="tag tag--K" aria-label="国家控制布点专业">K</em>');
+
+    const nameHTML = query ? highlight(m.name, query) : escapeHTML(m.name);
+    const codeHTML = query ? highlight(m.code, query) : escapeHTML(m.code);
+
+    let pathLine = "";
+    if (showPath) {
+      const cls2 = cls && !cls.synthetic ? ` · ${escapeHTML(cls.name)}` : "";
+      pathLine = `<span class="major__note">${cat.code} ${escapeHTML(cat.name)}${cls2}</span>`;
+    } else if (m.note) {
+      pathLine = `<span class="major__note">${escapeHTML(m.note)}</span>`;
+    }
+
+    btn.innerHTML = `
+      <span class="major__code">${codeHTML}</span>
+      <span class="major__main">
+        <span class="major__name">${nameHTML}${tags.join("")}</span>
+        ${pathLine}
+        ${m.intro ? `<span class="major__has-intro">查看专业介绍 →</span>` : ""}
+      </span>`;
+
+    btn.addEventListener("click", () => openMajorDetail(m, cat, cls));
+    return btn;
+  }
+
+  // 搜索页
+  function renderSearch(query) {
+    clearHost();
+    host.appendChild($("#tpl-search").content.cloneNode(true));
+    setTitle(`检索：${query}`);
+
+    $("[data-search-q]").textContent = query;
+    const results = filterMajors(query);
+    $("[data-search-count]").textContent = results.length;
+
+    const container = $("[data-search-results]");
+    const emptyEl = $("[data-search-empty]");
+
+    if (results.length === 0) {
+      emptyEl.hidden = false;
+      return;
+    }
+    emptyEl.hidden = true;
+
+    // 按门类分组
+    const byCat = new Map();
+    for (const m of results) {
+      if (!byCat.has(m.categoryCode)) byCat.set(m.categoryCode, []);
+      byCat.get(m.categoryCode).push(m);
+    }
+
+    const frag = document.createDocumentFragment();
+    for (const [catCode, items] of byCat) {
+      const cat = DATA.categories.find((c) => c.code === catCode);
+      const sec = document.createElement("section");
+      sec.className = "cls-block";
+
+      const head = document.createElement("div");
+      head.className = "cls-block__head";
+      head.innerHTML = `
+        <span class="cls-block__code">${cat.code}</span>
+        <h2 class="cls-block__name"><a href="#/c/${cat.code}">${escapeHTML(cat.name)}</a></h2>
+        <span class="cls-block__count">${items.length} 个匹配</span>`;
+      sec.appendChild(head);
+
+      const grid = document.createElement("ul");
+      grid.className = "major-grid";
+      for (const m of items) {
+        const cls = cat.classes.find((c) => c.code === m.classCode);
+        const li = document.createElement("li");
+        li.appendChild(
+          majorButton(m, cat, cls, { query, showPath: !cls?.synthetic && true })
+        );
+        grid.appendChild(li);
+      }
+      sec.appendChild(grid);
+      frag.appendChild(sec);
+    }
+    container.appendChild(frag);
+  }
+
+  // 搜索过滤：匹配代码、专业名、专业类名、门类名
+  function filterMajors(q) {
+    const qs = q.trim().toLowerCase();
+    if (!qs) return [];
+    return FLAT.filter((m) => {
+      return (
+        m.code.toLowerCase().includes(qs) ||
+        m.name.toLowerCase().includes(qs) ||
+        (!m.classSynthetic && m.className.toLowerCase().includes(qs)) ||
+        m.categoryName.toLowerCase().includes(qs)
+      );
+    });
+  }
+
+  // ---------- TOC 同步高亮 ----------
+  let tocObserver = null;
+  function setupTocObserver() {
+    if (tocObserver) tocObserver.disconnect();
+    const links = $$("[data-toc-target]");
+    if (!links.length) return;
+    const targets = links
+      .map((a) => document.getElementById(a.dataset.tocTarget))
+      .filter(Boolean);
+    if (!targets.length) return;
+
+    tocObserver = new IntersectionObserver(
+      (entries) => {
+        // 找出最靠近顶部的可见块
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.target.offsetTop - b.target.offsetTop);
+        if (!visible.length) return;
+        const id = visible[0].target.id;
+        for (const a of links) {
+          if (a.dataset.tocTarget === id) a.setAttribute("aria-current", "true");
+          else a.removeAttribute("aria-current");
+        }
+      },
+      { rootMargin: "-96px 0px -60% 0px", threshold: 0 }
+    );
+    targets.forEach((t) => tocObserver.observe(t));
+  }
+
+  // ---------- 抽屉 ----------
+  const drawer = $("#drawer");
+  const drawerBody = $("#drawer-body");
+  const notesDialog = $("#notes-dialog");
+  const notesBody = $("#notes-body");
+
+  let lastFocus = null;
+
+  function openDrawer(el) {
+    lastFocus = document.activeElement;
+    el.hidden = false;
+    el.setAttribute("aria-hidden", "false");
+    requestAnimationFrame(() => el.classList.add("is-open"));
+    document.body.style.overflow = "hidden";
+    // 把焦点移到关闭按钮
+    const close = el.querySelector(".drawer__close");
+    if (close) close.focus({ preventScroll: true });
+  }
+
+  function closeDrawer(el) {
+    el.classList.remove("is-open");
+    el.setAttribute("aria-hidden", "true");
+    setTimeout(() => {
+      el.hidden = true;
+      document.body.style.overflow = "";
+      if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+    }, 260);
+  }
+
+  function openMajorDetail(m, cat, cls) {
+    const tags = [];
+    if (m.isSpecial) tags.push('<em class="tag tag--T" aria-label="特设专业">T</em>');
+    if (m.isControlled) tags.push('<em class="tag tag--K" aria-label="国家控制布点专业">K</em>');
+
+    const typeLabel = [
+      m.isSpecial ? "特设专业（T）" : "基本专业",
+      m.isControlled ? "国家控制布点（K）" : null,
+    ]
+      .filter(Boolean)
+      .join(" · ");
+
+    const classRow = cls && !cls.synthetic
+      ? `<dt>所属专业类</dt><dd>${cls.code} ${escapeHTML(cls.name)}</dd>`
+      : `<dt>所属层级</dt><dd>${escapeHTML(cat.name)}（直辖）</dd>`;
+
+    const noteHTML = m.note
+      ? `<section class="detail__section">
+           <h3>官方括注</h3>
+           <p>${escapeHTML(m.note)}</p>
+         </section>`
+      : "";
+
+    const introHTML = m.intro
+      ? `<section class="detail__section">
+           <h3>专业介绍</h3>
+           ${renderIntro(m.intro)}
+         </section>`
+      : `<section class="detail__section">
+           <h3>专业介绍</h3>
+           <div class="placeholder">该专业的介绍正在筹备中，敬请期待。</div>
+         </section>`;
+
+    drawerBody.innerHTML = `
+      <p class="detail__eyebrow">${cat.code} ${escapeHTML(cat.name)}</p>
+      <p class="detail__code" translate="no">${escapeHTML(m.code)}</p>
+      <h2 class="detail__name" id="drawer-title">
+        ${escapeHTML(m.name)}${tags.join("")}
+      </h2>
+      <dl class="detail__meta">
+        <dt>专业代码</dt><dd translate="no">${escapeHTML(m.code)}</dd>
+        ${classRow}
+        <dt>所属门类</dt><dd>${cat.code} ${escapeHTML(cat.name)}</dd>
+        <dt>专业类型</dt><dd>${typeLabel}</dd>
+      </dl>
+      ${noteHTML}
+      ${introHTML}
+      <section class="detail__section">
+        <h3>查看同类</h3>
+        <p><a href="#/c/${cat.code}">前往「${escapeHTML(cat.name)}」门类目录页 →</a></p>
+      </section>`;
+
+    openDrawer(drawer);
+  }
+
+  function renderIntro(intro) {
+    // 支持字符串或 {summary, points: [], outlets: []} 这类结构，按你后续定义扩展
+    if (typeof intro === "string") {
+      return `<p>${escapeHTML(intro)}</p>`;
+    }
+    if (intro && typeof intro === "object") {
+      let html = "";
+      if (intro.summary) html += `<p>${escapeHTML(intro.summary)}</p>`;
+      if (Array.isArray(intro.points) && intro.points.length) {
+        html += `<ul>${intro.points.map((p) => `<li>${escapeHTML(p)}</li>`).join("")}</ul>`;
+      }
+      if (Array.isArray(intro.outlets) && intro.outlets.length) {
+        html += `<p><strong>典型出口：</strong>${intro.outlets.map(escapeHTML).join(" / ")}</p>`;
+      }
+      return html || `<p>${escapeHTML(JSON.stringify(intro))}</p>`;
+    }
+    return "";
+  }
+
+  function openNotes() {
+    notesBody.innerHTML = `
+      <div class="notes-body">
+        <h2 id="notes-title">凡　例</h2>
+        <ol>
+          ${DATA.meta.notes.map((n) => `<li><p>${escapeHTML(n)}</p></li>`).join("")}
+        </ol>
+      </div>`;
+    openDrawer(notesDialog);
+  }
+
+  // ---------- 搜索框 ----------
+  const searchForm = $("#search-form");
+  const searchInput = $("#search-input");
+
+  let searchDebounce = null;
+  searchInput.addEventListener("input", () => {
+    const q = searchInput.value.trim();
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(() => {
+      if (!q) {
+        navigate("");
+      } else {
+        navigate(`#/q/${encodeURIComponent(q)}`);
+      }
+    }, 120);
+  });
+  searchForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const q = searchInput.value.trim();
+    if (q) navigate(`#/q/${encodeURIComponent(q)}`);
+  });
+
+  // ---------- 全局快捷键 ----------
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (drawer.classList.contains("is-open")) return closeDrawer(drawer);
+      if (notesDialog.classList.contains("is-open")) return closeDrawer(notesDialog);
+    }
+    // 在输入框/可编辑元素之外按 "/" 聚焦搜索框
+    const tag = (e.target && e.target.tagName) || "";
+    const inField = tag === "INPUT" || tag === "TEXTAREA" || e.target?.isContentEditable;
+    if (e.key === "/" && !inField && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      e.preventDefault();
+      searchInput.focus();
+      searchInput.select();
+    }
+  });
+
+  // 关闭抽屉
+  document.addEventListener("click", (e) => {
+    if (e.target.matches("[data-close]") || e.target.closest("[data-close]")) {
+      if (drawer.classList.contains("is-open")) closeDrawer(drawer);
+      else if (notesDialog.classList.contains("is-open")) closeDrawer(notesDialog);
+    }
+  });
+
+  $("#open-notes").addEventListener("click", openNotes);
+
+  // ---------- 主渲染 ----------
+  function render() {
+    const route = parseRoute();
+    // 同步搜索框文本（如果从其他视图跳回 home）
+    if (route.view !== "search" && searchInput.value && !document.activeElement?.matches("#search-input")) {
+      searchInput.value = "";
+    }
+    if (route.view === "search" && searchInput.value !== route.query) {
+      // 不打断用户输入：仅当差异较大才回填
+      if (document.activeElement !== searchInput) searchInput.value = route.query;
+    }
+
+    if (route.view === "home") return renderHome();
+    if (route.view === "category") return renderCategory(route.code);
+    if (route.view === "search") return renderSearch(route.query);
+    renderHome();
+  }
+
+  window.addEventListener("hashchange", render);
+  render();
+})();
+
+</script>
+</body>
+</html>

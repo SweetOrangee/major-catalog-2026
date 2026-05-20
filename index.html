@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+<meta name="theme-color" content="#F4EFE4" />
+<meta name="description" content="《普通高等学校本科专业目录（2026 年）》交互查阅 · 教育部 2026 年 4 月发布" />
+<title>本科专业目录 · 2026 · 教育部</title>
+<link rel="stylesheet" href="./assets/style.css" />
+</head>
+<body>
+
+<a class="skip-link" href="#main">跳到正文</a>
+
+<header class="site-header" role="banner">
+  <div class="site-header__inner">
+    <a href="#" class="site-header__brand" aria-label="返回扉页">
+      <span class="site-header__seal" aria-hidden="true">部</span>
+      <span class="site-header__title">
+        <span class="site-header__title-main">本科专业目录</span>
+        <span class="site-header__title-sub">中华人民共和国教育部 · 2026</span>
+      </span>
+    </a>
+
+    <form class="search" role="search" id="search-form" autocomplete="off">
+      <label class="search__label" for="search-input">检索</label>
+      <input
+        id="search-input"
+        type="search"
+        name="q"
+        class="search__input"
+        placeholder="搜索专业、代码或类别…"
+        inputmode="search"
+        spellcheck="false"
+        translate="no"
+      />
+      <kbd class="search__hint" aria-hidden="true">/</kbd>
+    </form>
+
+    <button type="button" class="site-header__notes" id="open-notes" aria-haspopup="dialog">
+      <span aria-hidden="true">凡例</span>
+      <span class="visually-hidden">查看专业目录的编排说明</span>
+    </button>
+  </div>
+</header>
+
+<main id="main" class="view-host" tabindex="-1"></main>
+
+<aside class="drawer" id="drawer" hidden aria-hidden="true" aria-labelledby="drawer-title" role="dialog">
+  <div class="drawer__scrim" data-close></div>
+  <article class="drawer__panel" role="document">
+    <header class="drawer__head">
+      <button type="button" class="drawer__close" data-close aria-label="关闭详情">
+        <span aria-hidden="true">×</span>
+      </button>
+    </header>
+    <div class="drawer__body" id="drawer-body"><!-- 动态填充 --></div>
+  </article>
+</aside>
+
+<aside class="drawer drawer--notes" id="notes-dialog" hidden aria-hidden="true" aria-labelledby="notes-title" role="dialog">
+  <div class="drawer__scrim" data-close></div>
+  <article class="drawer__panel" role="document">
+    <header class="drawer__head">
+      <button type="button" class="drawer__close" data-close aria-label="关闭凡例">
+        <span aria-hidden="true">×</span>
+      </button>
+    </header>
+    <div class="drawer__body" id="notes-body"><!-- 动态填充 --></div>
+  </article>
+</aside>
+
+<template id="tpl-home">
+  <section class="page-home" aria-labelledby="cover-title">
+    <div class="cover">
+      <p class="cover__eyebrow">中华人民共和国教育部 · 二〇二六年四月发布</p>
+      <h1 class="cover__title" id="cover-title">
+        <span class="cover__title-line cover__title-line--small">普通高等学校</span>
+        <span class="cover__title-line cover__title-line--large">本科专业目录</span>
+      </h1>
+      <p class="cover__year"><span aria-hidden="true">二〇二六</span><span class="visually-hidden">2026 年</span></p>
+
+      <dl class="cover__stats" aria-label="目录规模">
+        <div><dt>学科门类</dt><dd data-stat="categories">—</dd></div>
+        <div><dt>专业类</dt><dd data-stat="classes">—</dd></div>
+        <div><dt>本科专业</dt><dd data-stat="majors">—</dd></div>
+      </dl>
+    </div>
+
+    <hr class="rule rule--double" aria-hidden="true" />
+
+    <nav class="catalog" aria-label="学科门类目录">
+      <h2 class="section-title"><span aria-hidden="true">目　录</span><span class="visually-hidden">学科门类目录</span></h2>
+      <ol class="catalog__list" id="catalog-list"><!-- 动态填充 --></ol>
+    </nav>
+
+    <hr class="rule" aria-hidden="true" />
+
+    <section class="cover__footer">
+      <p class="cover__hint">
+        点击门类可查看其下属的专业类与本科专业；点击专业可查看代码、所属与官方括注。
+      </p>
+      <p class="cover__legend">
+        代码后缀 <em class="tag tag--T">T</em> 表示特设专业，<em class="tag tag--K">K</em> 表示国家控制布点专业。
+      </p>
+    </section>
+  </section>
+</template>
+
+<template id="tpl-category">
+  <section class="page-category" aria-labelledby="cat-title">
+    <nav class="breadcrumb" aria-label="位置">
+      <a href="#">扉页</a>
+      <span aria-hidden="true">／</span>
+      <span data-breadcrumb-current>—</span>
+    </nav>
+
+    <header class="cat-head">
+      <p class="cat-head__code" data-cat-code>—</p>
+      <h1 class="cat-head__title" id="cat-title" data-cat-name>—</h1>
+      <p class="cat-head__meta">
+        <span data-cat-class-count>—</span> 个专业类
+        <span class="dot" aria-hidden="true">·</span>
+        <span data-cat-major-count>—</span> 个本科专业
+      </p>
+    </header>
+
+    <hr class="rule" aria-hidden="true" />
+
+    <div class="cat-body">
+      <nav class="cat-toc" aria-label="本门类内的专业类导航">
+        <ul data-cat-toc></ul>
+      </nav>
+      <div class="cat-content" data-cat-content></div>
+    </div>
+  </section>
+</template>
+
+<template id="tpl-search">
+  <section class="page-search" aria-labelledby="search-title">
+    <nav class="breadcrumb" aria-label="位置">
+      <a href="#">扉页</a>
+      <span aria-hidden="true">／</span>
+      <span>检索结果</span>
+    </nav>
+
+    <header class="search-head">
+      <h1 class="search-head__title" id="search-title">
+        “<span data-search-q>—</span>” 的检索结果
+      </h1>
+      <p class="search-head__meta" aria-live="polite">
+        共 <span data-search-count>0</span> 个结果
+      </p>
+    </header>
+
+    <hr class="rule" aria-hidden="true" />
+
+    <div class="search-results" data-search-results></div>
+    <p class="search-empty" data-search-empty hidden>未找到匹配的专业。试试输入完整专业名称、代码或所属类别。</p>
+  </section>
+</template>
+
+<script src="./assets/data.js"></script>
+<script src="./assets/app.js"></script>
+</body>
+</html>

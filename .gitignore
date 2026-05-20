@@ -1,0 +1,23 @@
+# 数据源 PDF（教育部官网可下载，仓库不再保留一份）
+W020260427440749576927.pdf
+
+# 私人参考文档
+front-end-design.md
+web-design-guideline.md
+
+# 临时探索
+scratch/
+tmp/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 系统 / 编辑器
+.DS_Store
+.idea/
+.vscode/
+*.swp
