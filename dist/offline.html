@@ -645,6 +645,8 @@ hr.rule--double::after {
   min-height: 84px;
   transition: background-color 180ms ease, color 180ms ease;
   width: 100%;
+  /* 让卡片填满所在 grid cell 高度，避免同行高度不齐 */
+  height: 100%;
   cursor: pointer;
 }
 .major:hover {
