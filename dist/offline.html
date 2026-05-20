@@ -1558,12 +1558,20 @@ window.MAJORS_DATA = {"meta":{"title":"普通高等学校本科专业目录","ye
       </dl>
       ${noteHTML}
       ${introHTML}
+      ${gotoCategoryHTML(cat)}`;
+
+    openDrawer(drawer);
+  }
+
+  // 只在不知道当前位置时（搜索、首页）才显示「前往本门类」入口
+  function gotoCategoryHTML(cat) {
+    const route = parseRoute();
+    if (route.view === "category" && route.code === cat.code) return "";
+    return `
       <section class="detail__section">
         <h3>查看同类</h3>
         <p><a href="#/c/${cat.code}">前往「${escapeHTML(cat.name)}」门类目录页 →</a></p>
       </section>`;
-
-    openDrawer(drawer);
   }
 
   function renderIntro(intro) {
