@@ -206,12 +206,13 @@
       pathLine = `<span class="major__note">${escapeHTML(m.note)}</span>`;
     }
 
+    const hint = introHint(m.intro);
     btn.innerHTML = `
       <span class="major__code">${codeHTML}</span>
       <span class="major__main">
         <span class="major__name">${nameHTML}${tags.join("")}</span>
         ${pathLine}
-        ${m.intro ? `<span class="major__has-intro">查看专业介绍 →</span>` : ""}
+        ${hint ? `<span class="major__has-intro">${hint}</span>` : ""}
       </span>`;
 
     btn.addEventListener("click", () => openMajorDetail(m, cat, cls));
@@ -369,15 +370,7 @@
          </section>`
       : "";
 
-    const introHTML = m.intro
-      ? `<section class="detail__section">
-           <h3>专业介绍</h3>
-           ${renderIntro(m.intro)}
-         </section>`
-      : `<section class="detail__section">
-           <h3>专业介绍</h3>
-           <div class="placeholder">该专业的介绍正在筹备中，敬请期待。</div>
-         </section>`;
+    const introHTML = renderIntroSection(m.intro);
 
     drawerBody.innerHTML = `
       <p class="detail__eyebrow">${cat.code} ${escapeHTML(cat.name)}</p>
@@ -409,23 +402,187 @@
       </section>`;
   }
 
-  function renderIntro(intro) {
-    // 支持字符串或 {summary, points: [], outlets: []} 这类结构，按你后续定义扩展
-    if (typeof intro === "string") {
-      return `<p>${escapeHTML(intro)}</p>`;
-    }
-    if (intro && typeof intro === "object") {
-      let html = "";
-      if (intro.summary) html += `<p>${escapeHTML(intro.summary)}</p>`;
-      if (Array.isArray(intro.points) && intro.points.length) {
-        html += `<ul>${intro.points.map((p) => `<li>${escapeHTML(p)}</li>`).join("")}</ul>`;
-      }
-      if (Array.isArray(intro.outlets) && intro.outlets.length) {
-        html += `<p><strong>典型出口：</strong>${intro.outlets.map(escapeHTML).join(" / ")}</p>`;
-      }
-      return html || `<p>${escapeHTML(JSON.stringify(intro))}</p>`;
-    }
+  // ---------- 专业介绍 ----------
+  // intro 的形态由 scripts/merge_intro.py 决定：
+  //   {specId, summary?, jyfx?, kyfx?, satisfaction?, scale?, gender?, schools?, year?, interpretation?}
+  // 渲染策略：解读 > 官方简介 > 就业/考研 > 在校生画像 > 满意度 > 推荐院校 > 外链
+
+  function introHint(intro) {
+    if (!intro) return "";
+    if (intro.interpretation || intro.summary) return "查看介绍 →";
     return "";
+  }
+
+  function renderIntroSection(intro) {
+    // 真的什么都没有（理论上不应该出现，所有专业都至少有 specId）
+    if (!intro) {
+      return `<section class="detail__section">
+        <h3>专业介绍</h3>
+        <div class="placeholder">该专业的介绍正在筹备中，敬请期待。</div>
+      </section>`;
+    }
+
+    const hasContent =
+      intro.summary || intro.interpretation || (intro.jyfx && intro.jyfx.length);
+
+    if (!hasContent) {
+      // 仅有 specId 兜底：多半是 2024 后新增专业，阳光高考也还没补介绍
+      return `<section class="detail__section detail__section--intro">
+        <h3>专业介绍</h3>
+        <p class="placeholder">该专业为新设/年轻专业，详细介绍待官方补充。</p>
+        ${renderIntroFooter(intro)}
+      </section>`;
+    }
+
+    const parts = [];
+    if (intro.summary) parts.push(renderSummary(intro.summary));
+    parts.push(renderTagGroups(intro));
+    parts.push(renderProfile(intro));
+    parts.push(renderSchools(intro.schools));
+    // 解读的三小节正文作为"详解"接在最下面，去掉作者/导语/标题等装饰
+    if (intro.interpretation) parts.push(renderChapters(intro.interpretation.sections));
+    parts.push(renderIntroFooter(intro));
+
+    return `<section class="detail__section detail__section--intro">
+      <h3>专业介绍</h3>
+      ${parts.filter(Boolean).join("")}
+    </section>`;
+  }
+
+  function renderChapters(sections) {
+    if (!Array.isArray(sections) || !sections.length) return "";
+    const cNum = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
+    return sections
+      .map(
+        (sec, i) => `
+        <div class="intro__chapter">
+          <h4 class="intro__chapter-title">
+            <em class="intro__chapter-num">${cNum[i] || i + 1}</em>
+            <span>${escapeHTML(sec.title)}</span>
+          </h4>
+          <div class="intro__rich">${sanitizeHTML(sec.html)}</div>
+        </div>`
+      )
+      .join("");
+  }
+
+  function renderSummary(summary) {
+    return `
+      <div class="intro__group intro__group--summary">
+        <h4 class="intro__group-title">官方简介</h4>
+        <p class="intro__summary">${escapeHTML(summary)}</p>
+      </div>`;
+  }
+
+  function renderTagGroups(intro) {
+    const blocks = [];
+    if (Array.isArray(intro.jyfx) && intro.jyfx.length) {
+      blocks.push(`
+        <div class="intro__group">
+          <h4 class="intro__group-title">典型就业方向</h4>
+          <ul class="intro__tags">
+            ${intro.jyfx.map((x) => `<li>${escapeHTML(x)}</li>`).join("")}
+          </ul>
+        </div>`);
+    }
+    if (Array.isArray(intro.kyfx) && intro.kyfx.length) {
+      blocks.push(`
+        <div class="intro__group">
+          <h4 class="intro__group-title">考研可关注的学科</h4>
+          <ul class="intro__tags intro__tags--soft">
+            ${intro.kyfx
+              .map(
+                (x) => `<li>
+                  <span class="intro__kyfx-code" translate="no">${escapeHTML(x.code || "")}</span>
+                  <span>${escapeHTML(x.name || "")}</span>
+                </li>`
+              )
+              .join("")}
+          </ul>
+        </div>`);
+    }
+    return blocks.join("");
+  }
+
+  function renderProfile(intro) {
+    if (!intro.scale && !intro.gender) return "";
+    const items = [];
+    if (intro.scale) {
+      items.push(
+        `<span class="intro__profile-item"><span class="intro__profile-label">学生规模</span><b>${escapeHTML(intro.scale)}</b> 人</span>`
+      );
+    }
+    if (intro.gender) {
+      const [b, g] = intro.gender;
+      items.push(
+        `<span class="intro__profile-item"><span class="intro__profile-label">男女比例</span><b>${b}</b> : <b>${g}</b></span>`
+      );
+    }
+    return `
+      <div class="intro__group">
+        <h4 class="intro__group-title">在校生画像</h4>
+        <div class="intro__profile">${items.join("")}</div>
+      </div>`;
+  }
+
+  function renderSchools(list) {
+    if (!Array.isArray(list) || !list.length) return "";
+    return `
+      <div class="intro__group">
+        <h4 class="intro__group-title">开设院校推荐</h4>
+        <ol class="intro__schools">
+          ${list
+            .map(
+              (s) => `<li>
+                <span class="intro__school-name">${escapeHTML(s.name || "")}</span>
+                <b class="intro__school-rank">${Number(s.rank).toFixed(1)}</b>
+              </li>`
+            )
+            .join("")}
+        </ol>
+      </div>`;
+  }
+
+  function renderIntroFooter(intro) {
+    const specId = intro && intro.specId;
+    if (!specId) return "";
+    const url = `https://gaokao.chsi.com.cn/zyk/zybk/detail/${encodeURIComponent(specId)}`;
+    const year = intro.year ? `${intro.year} 年` : "";
+    return `
+      <div class="intro__footer">
+        <a class="intro__external" href="${url}" target="_blank" rel="noopener noreferrer">
+          在阳光高考查看完整专业页 →
+        </a>
+        <p class="intro__credit">资料来源：教育部阳光高考信息平台${year ? ` · ${year}采集` : ""}</p>
+      </div>`;
+  }
+
+  // 解读富文本只来自阳光高考且标签可控：<p><strong><em><h3-h5><span><br><ul><ol><li>
+  // 还是做一遍白名单 sanitize，扔掉所有属性，避免万一塞了 onclick 类的脏数据
+  const ALLOWED_TAGS = new Set([
+    "p", "strong", "b", "em", "i", "u", "span", "br",
+    "h3", "h4", "h5", "ul", "ol", "li", "div",
+  ]);
+  function sanitizeHTML(html) {
+    if (!html) return "";
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const walk = (node) => {
+      Array.from(node.childNodes).forEach((child) => {
+        if (child.nodeType === 1) {
+          const tag = child.tagName.toLowerCase();
+          if (!ALLOWED_TAGS.has(tag)) {
+            child.replaceWith(doc.createTextNode(child.textContent || ""));
+            return;
+          }
+          Array.from(child.attributes).forEach((a) => child.removeAttribute(a.name));
+          walk(child);
+        } else if (child.nodeType === 8) {
+          child.remove();
+        }
+      });
+    };
+    walk(doc.body);
+    return doc.body.innerHTML;
   }
 
   function openNotes() {

@@ -987,6 +987,223 @@ mark.hl {
   .cover__stats { grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
 }
 
+/* =========================================================
+   专业介绍区（专家解读 + 官方简介 + 标签 + 满意度 + 推荐院校）
+   ========================================================= */
+.detail__section--intro { padding-top: var(--space-2); }
+
+/* 详解三小节（解读正文，不含导语/标题/作者） */
+.intro__chapter {
+  margin: var(--space-6) 0 0;
+}
+.intro__chapter:first-of-type {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--rule);
+}
+.intro__chapter-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--ink);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.intro__chapter-num {
+  font-style: normal;
+  font-size: 1.4rem;
+  color: var(--vermilion);
+  letter-spacing: 0;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.intro__rich {
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--ink);
+}
+.intro__rich p { margin: 0 0 var(--space-3); text-indent: 2em; }
+.intro__rich p:last-child { margin-bottom: 0; }
+.intro__rich strong, .intro__rich b {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  color: var(--ink);
+}
+.intro__rich h3, .intro__rich h4, .intro__rich h5 {
+  margin: var(--space-4) 0 var(--space-2);
+  font-family: var(--font-serif);
+  font-size: 0.96rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--vermilion-deep);
+}
+
+.intro__interp-byline {
+  margin: var(--space-5) 0 0;
+  font-family: var(--font-serif);
+  font-size: 0.82rem;
+  letter-spacing: 0.18em;
+  color: var(--ink-mute);
+  text-align: right;
+}
+
+/* 通用分组 */
+.intro__group { margin: var(--space-5) 0; }
+.intro__group-title {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-serif);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  color: var(--ink-soft);
+  padding-left: 0.32em;
+  border-left: 3px solid var(--ink);
+}
+
+/* 官方简介（在解读下方时降级展示） */
+.intro__summary {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--ink);
+  text-indent: 2em;
+}
+.intro__group--summary .intro__summary {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+/* 标签云：就业方向 / 考研方向 */
+.intro__tags {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.5rem;
+}
+.intro__tags li {
+  font-family: var(--font-serif);
+  font-size: 0.86rem;
+  padding: 0.32em 0.85em;
+  border: 1px solid var(--rule);
+  background: var(--paper-soft);
+  color: var(--ink);
+  border-radius: 1px;
+  letter-spacing: 0.04em;
+}
+.intro__tags--soft li {
+  background: transparent;
+  border-style: dashed;
+  color: var(--ink-soft);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5em;
+}
+.intro__kyfx-code {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-mute);
+  letter-spacing: 0;
+}
+
+/* 在校生画像 */
+.intro__profile {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-5);
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+.intro__profile-item { display: inline-flex; align-items: baseline; gap: 0.5em; }
+.intro__profile-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-mute);
+}
+.intro__profile b {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--vermilion);
+}
+
+/* 推荐院校 */
+.intro__schools {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: school;
+  display: grid;
+  gap: 0;
+  font-size: 0.9rem;
+}
+.intro__schools li {
+  counter-increment: school;
+  display: grid;
+  grid-template-columns: 2em 1fr auto;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: 0.5em 0;
+  border-bottom: 1px dotted var(--rule);
+}
+.intro__schools li::before {
+  content: counter(school, decimal-leading-zero);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-mute);
+}
+.intro__schools li:last-child { border-bottom: 0; }
+.intro__school-name {
+  font-family: var(--font-serif);
+  color: var(--ink);
+}
+.intro__school-rank {
+  font-family: var(--font-serif);
+  font-variant-numeric: tabular-nums;
+  color: var(--vermilion);
+  font-weight: 700;
+}
+
+/* 外链 + 来源 */
+.intro__footer {
+  margin: var(--space-6) 0 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule-soft);
+  text-align: center;
+}
+.intro__external {
+  display: inline-block;
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--vermilion);
+  text-decoration: none;
+  padding: 0.5em 0;
+  border-bottom: 1px solid var(--vermilion);
+}
+.intro__external:hover { color: var(--vermilion-deep); border-bottom-color: var(--vermilion-deep); }
+.intro__credit {
+  margin: var(--space-3) 0 0;
+  font-family: var(--font-serif);
+  font-size: 0.74rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-mute);
+}
+
+/* 移动/窄屏：详解小节字号收紧 */
+@media (max-width: 520px) {
+  .intro__chapter-title { letter-spacing: 0.1em; }
+}
+
 /* 视觉减弱选项 */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
