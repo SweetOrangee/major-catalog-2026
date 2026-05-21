@@ -165,6 +165,12 @@ hr.rule--double::after {
   /* 安全区，留出刘海 */
   padding-top: env(safe-area-inset-top);
 }
+/* 国产/老旧浏览器不支持 backdrop-filter 时，改用不透明背景，避免下方文字穿透 header */
+@supports not ((backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px))) {
+  .site-header {
+    background: var(--paper);
+  }
+}
 
 .site-header__inner {
   display: flex;
@@ -290,8 +296,6 @@ hr.rule--double::after {
   color: var(--vermilion);
   border-color: var(--vermilion);
 }
-/* 桌面默认显示完整文案，短文案隐藏；窄屏切换（见 @media ≤640px） */
-.site-header__notes-short { display: none; }
 
 /* =========================================================
    主体容器
@@ -985,16 +989,13 @@ mark.hl {
 
 @media (max-width: 640px) {
   .search__hint { display: none; }
-  /* 窄屏：按钮文字缩成单字（AI 推荐→AI，凡例→例），跟印章「册」单字呼应，省出位置给搜索框 */
-  .site-header__notes-full { display: none; }
-  .site-header__notes-short { display: inline; }
   .site-header__notes {
     padding: 0.5rem 0.7rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.15em;
   }
   .cover__stats { grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
 }
-/* 极窄屏（iPhone SE 这一档）：隐藏品牌标题，只剩印章兜底，保 AI/例 按钮可见 */
+/* 极窄屏（iPhone SE 一档）：隐藏品牌标题，只剩印章 + 搜索 + AI 推荐 */
 @media (max-width: 380px) {
   .site-header__title { display: none; }
 }
@@ -1409,6 +1410,23 @@ a.intro__school-name:hover {
 .site-footer__dot {
   color: var(--rule);
 }
+/* 凡例按钮：跟旁边外链视觉一致（朴素的文字按钮，不带边框背景） */
+.site-footer__link {
+  font: inherit;
+  letter-spacing: inherit;
+  color: var(--ink-soft);
+  background: none;
+  border: none;
+  border-bottom: 1px solid transparent;
+  padding: 0;
+  margin: 0 0.3em;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.site-footer__link:hover {
+  color: var(--vermilion);
+  border-bottom-color: var(--vermilion);
+}
 
 /* ---------- AI 推荐面板（复用 drawer 内部容器） ---------- */
 .ai-panel {
@@ -1637,15 +1655,8 @@ a.intro__school-name:hover {
     </form>
 
     <button type="button" class="site-header__notes" id="open-ai" aria-haspopup="dialog">
-      <span class="site-header__notes-full" aria-hidden="true">AI 推荐</span>
-      <span class="site-header__notes-short" aria-hidden="true">AI</span>
+      <span aria-hidden="true">AI 推荐</span>
       <span class="visually-hidden">使用 AI 为我推荐适合的专业</span>
-    </button>
-
-    <button type="button" class="site-header__notes" id="open-notes" aria-haspopup="dialog">
-      <span class="site-header__notes-full" aria-hidden="true">凡例</span>
-      <span class="site-header__notes-short" aria-hidden="true">例</span>
-      <span class="visually-hidden">查看专业目录的编排说明</span>
     </button>
   </div>
 </header>
@@ -1659,6 +1670,8 @@ a.intro__school-name:hover {
       <a href="http://www.moe.gov.cn/" target="_blank" rel="noopener">中华人民共和国教育部</a>
       <span class="site-footer__dot" aria-hidden="true">·</span>
       <a href="https://gaokao.chsi.com.cn/zyk/zybk/" target="_blank" rel="noopener">阳光高考信息平台</a>
+      <span class="site-footer__dot" aria-hidden="true">·</span>
+      <button type="button" class="site-footer__link" id="open-notes" aria-haspopup="dialog">凡例</button>
     </p>
   </div>
 </footer>
