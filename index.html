@@ -55,8 +55,6 @@
       <a href="http://www.moe.gov.cn/" target="_blank" rel="noopener">中华人民共和国教育部</a>
       <span class="site-footer__dot" aria-hidden="true">·</span>
       <a href="https://gaokao.chsi.com.cn/zyk/zybk/" target="_blank" rel="noopener">阳光高考信息平台</a>
-      <span class="site-footer__dot" aria-hidden="true">·</span>
-      <button type="button" class="site-footer__link" id="open-notes" aria-haspopup="dialog">凡例</button>
     </p>
   </div>
 </footer>
@@ -88,7 +86,10 @@
 <template id="tpl-home">
   <section class="page-home" aria-labelledby="cover-title">
     <div class="cover">
-      <p class="cover__eyebrow">依据中华人民共和国教育部 · 二〇二六年四月发布版整理</p>
+      <p class="cover__eyebrow">
+        依据中华人民共和国教育部 · 二〇二六年四月发布版整理
+        <button type="button" class="cover__notes-btn" id="open-notes" aria-haspopup="dialog">说明</button>
+      </p>
       <h1 class="cover__title" id="cover-title">
         <span class="cover__title-line cover__title-line--small">普通高等学校</span>
         <span class="cover__title-line cover__title-line--large">本科专业目录</span>

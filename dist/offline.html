@@ -158,18 +158,12 @@ hr.rule--double::after {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: color-mix(in srgb, var(--paper) 92%, transparent);
-  backdrop-filter: saturate(1.1) blur(8px);
-  -webkit-backdrop-filter: saturate(1.1) blur(8px);
+  /* 全不透明：之前 92% + backdrop-filter 在国产浏览器/某些 webkit fork 不可靠，
+     直接不透明视觉差异不大，但能确保 sticky 时下方内容不穿透 */
+  background: var(--paper);
   border-bottom: 1px solid var(--rule);
   /* 安全区，留出刘海 */
   padding-top: env(safe-area-inset-top);
-}
-/* 国产/老旧浏览器不支持 backdrop-filter 时，改用不透明背景，避免下方文字穿透 header */
-@supports not ((backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px))) {
-  .site-header {
-    background: var(--paper);
-  }
 }
 
 .site-header__inner {
@@ -249,6 +243,10 @@ hr.rule--double::after {
   font: inherit;
   font-size: 1rem;
   color: var(--ink);
+  /* 移除 type="search" 在 webkit/blink 自带的清除按钮和搜索图标，
+     否则会盖住右侧 placeholder（窄屏尤其明显） */
+  appearance: none;
+  -webkit-appearance: none;
   background: var(--paper-soft);
   border: 1px solid var(--rule);
   border-radius: 2px;
@@ -256,6 +254,14 @@ hr.rule--double::after {
   touch-action: manipulation;
 }
 .search__input::placeholder { color: var(--ink-mute); }
+/* 同步清掉 webkit search 控件残留（部分浏览器需显式清） */
+.search__input::-webkit-search-decoration,
+.search__input::-webkit-search-cancel-button,
+.search__input::-webkit-search-results-button,
+.search__input::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  display: none;
+}
 .search__input:hover { border-color: var(--ink-mute); }
 .search__input:focus-visible {
   outline: 2px solid var(--vermilion);
@@ -328,6 +334,24 @@ hr.rule--double::after {
   letter-spacing: 0.18em;
   color: var(--ink-soft);
   font-size: 0.85rem;
+}
+/* 「说明」按钮：小方框样式，比 AI 推荐更轻；视觉跟 eyebrow 在同一行 */
+.cover__notes-btn {
+  margin-left: 0.6em;
+  padding: 0.15em 0.6em;
+  font: inherit;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: color 0.15s, border-color 0.15s;
+}
+.cover__notes-btn:hover {
+  color: var(--vermilion);
+  border-color: var(--vermilion);
 }
 .cover__title {
   margin: 0;
@@ -1410,23 +1434,6 @@ a.intro__school-name:hover {
 .site-footer__dot {
   color: var(--rule);
 }
-/* 凡例按钮：跟旁边外链视觉一致（朴素的文字按钮，不带边框背景） */
-.site-footer__link {
-  font: inherit;
-  letter-spacing: inherit;
-  color: var(--ink-soft);
-  background: none;
-  border: none;
-  border-bottom: 1px solid transparent;
-  padding: 0;
-  margin: 0 0.3em;
-  cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
-}
-.site-footer__link:hover {
-  color: var(--vermilion);
-  border-bottom-color: var(--vermilion);
-}
 
 /* ---------- AI 推荐面板（复用 drawer 内部容器） ---------- */
 .ai-panel {
@@ -1670,8 +1677,6 @@ a.intro__school-name:hover {
       <a href="http://www.moe.gov.cn/" target="_blank" rel="noopener">中华人民共和国教育部</a>
       <span class="site-footer__dot" aria-hidden="true">·</span>
       <a href="https://gaokao.chsi.com.cn/zyk/zybk/" target="_blank" rel="noopener">阳光高考信息平台</a>
-      <span class="site-footer__dot" aria-hidden="true">·</span>
-      <button type="button" class="site-footer__link" id="open-notes" aria-haspopup="dialog">凡例</button>
     </p>
   </div>
 </footer>
@@ -1703,7 +1708,10 @@ a.intro__school-name:hover {
 <template id="tpl-home">
   <section class="page-home" aria-labelledby="cover-title">
     <div class="cover">
-      <p class="cover__eyebrow">依据中华人民共和国教育部 · 二〇二六年四月发布版整理</p>
+      <p class="cover__eyebrow">
+        依据中华人民共和国教育部 · 二〇二六年四月发布版整理
+        <button type="button" class="cover__notes-btn" id="open-notes" aria-haspopup="dialog">说明</button>
+      </p>
       <h1 class="cover__title" id="cover-title">
         <span class="cover__title-line cover__title-line--small">普通高等学校</span>
         <span class="cover__title-line cover__title-line--large">本科专业目录</span>
