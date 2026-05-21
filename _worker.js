@@ -35,10 +35,10 @@ async function handleRecommend(request, env) {
   }
 
   const provider = String(body.provider || "auto").toLowerCase();
-  // auto 默认 Gemini 优先（推荐质量更稳）；智谱无限额度做 fallback
+  // auto：智谱无限额度优先，Gemini（3.1 flash-lite，500 RPD）兜底
   const order = provider === "gemini" ? ["gemini"]
               : provider === "zhipu"  ? ["zhipu"]
-              : ["gemini", "zhipu"];
+              : ["zhipu", "gemini"];
 
   let majors;
   try {
@@ -91,9 +91,10 @@ async function handleRecommend(request, env) {
 }
 
 function normalizeName(s) {
-  return String(s || "")
-    .toLowerCase()
-    .replace(/[\s\u3000、，,。.（）()【】\[\]《》<>“”"'·\-—_:：;；!！?？/\\]/g, "");
+  // 先剥掉中英文括号及其中内容（兜底：LLM 万一把"专业名（门类-类别）"整段复制过来）
+  let x = String(s || "").replace(/[（(][^）)]*[）)]/g, "");
+  // 再剥掉所有空白、常见标点（中英文）
+  return x.toLowerCase().replace(/[\s\u3000、，,。.【】\[\]《》<>“”"'·\-—_:：;；!！?？/\\]/g, "");
 }
 
 // ---------- helpers ----------
@@ -111,17 +112,23 @@ function buildPrompt(interest, majorsText) {
 ${interest}
 """
 
-候选本科专业名称列表（每行一个，格式为「专业名（门类-类别）」）：
+候选本科专业列表（每行格式：「专业名（门类-类别）」，门类与类别仅供你参考用以判断专业归属，不要写到输出里）：
 ${majorsText}
 
 任务：从上面候选列表里挑出 5-8 个最匹配学生描述的本科专业。
 
-严格输出 JSON，不要任何额外文字、不要 markdown 围栏：
-{"recs":[{"name":"<候选列表里出现过的完整专业名，逐字复制>","reason":"<一两句具体理由>"}]}
+严格输出 JSON，不要任何额外文字、不要 markdown 围栏。
+
+输出格式示例（仅示意结构，实际推荐请基于学生描述）：
+{"recs":[
+  {"name":"汉语言文学","reason":"你喜欢阅读和写作，这个专业系统训练古今汉语与文学鉴赏，适合长期沉浸文本"},
+  {"name":"历史学","reason":"你对历史感兴趣，本专业培养史料解读与研究方法，对应你想深耕历史的方向"}
+]}
 
 要求：
-- name 必须**逐字**来自候选列表（包括"工程"、"学"等后缀，不要简称、不要编造）
-- reason 要具体贴合学生描述，避免空话；不要绝对化承诺（如"你一定能..."、"未来一定高薪"）
+- name 字段**只填中文专业名本身**（如「汉语言文学」「机器人工程」），**不要**带括号里的门类类别信息
+- name 必须**逐字**来自候选列表，不要简称、改写、编造
+- reason 要具体贴合学生描述，1-2 句话；不要绝对化承诺（如"你一定能..."、"未来一定高薪"）
 - 涉及健康/家庭等敏感话题请友好引导询问老师或家长`;
 }
 
@@ -151,7 +158,7 @@ async function callZhipu(prompt, apiKey) {
 
 async function callGemini(prompt, apiKey) {
   if (!apiKey) throw new Error("GEMINI_KEY 未配置");
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`;
   const resp = await fetch(url, {
     method: "POST",
     headers: { "content-type": "application/json" },
