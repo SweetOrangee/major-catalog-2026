@@ -1377,24 +1377,7 @@ a.intro__school-name:hover {
   margin: 0 auto;
 }
 
-/* 第一行：编者 — 用古籍版权页"撰者+机构+编"的句式 */
-.site-footer__editor-line {
-  margin: 0 0 0.6em;
-  font-family: var(--font-serif);
-  font-size: 0.95rem;
-  color: var(--ink);
-}
-.site-footer__editor {
-  font-weight: 700;
-  letter-spacing: 0.45em;
-  margin-right: 0.8em;
-}
-.site-footer__affil {
-  color: var(--ink-soft);
-  letter-spacing: 0.08em;
-  margin-right: 0.4em;
-}
-/* 第二行：数据来源 — 整体一行，无前缀错位问题 */
+/* 数据来源行 */
 .site-footer__source-line {
   margin: 0;
   font-family: var(--font-serif);
@@ -1415,6 +1398,202 @@ a.intro__school-name:hover {
 }
 .site-footer__dot {
   color: var(--rule);
+}
+
+/* ---------- AI 推荐面板（复用 drawer 内部容器） ---------- */
+.ai-panel {
+  font-family: var(--serif, "Source Han Serif SC", "Noto Serif SC", serif);
+}
+.ai-panel__title {
+  font-size: 1.6rem;
+  margin: 0 0 0.6rem;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.ai-panel__hint {
+  margin: 0 0 1.2rem;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+.ai-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.ai-form textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  padding: 0.75rem 0.9rem;
+  background: var(--paper-soft);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+.ai-form textarea:focus {
+  outline: 2px solid var(--vermilion);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+.ai-form__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.ai-form__provider {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+.ai-form__provider select {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.5rem;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  color: var(--ink);
+}
+.ai-submit {
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 0.55rem 1.2rem;
+  background: var(--ink);
+  color: var(--paper);
+  border: 0;
+  border-radius: 3px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: background 0.15s;
+}
+.ai-submit:hover:not(:disabled) {
+  background: var(--vermilion);
+}
+.ai-submit:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+.ai-disclaimer {
+  margin: 0.8rem 0 0;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--rule-soft);
+  font-size: 0.82rem;
+  color: var(--ink-mute);
+  line-height: 1.55;
+}
+
+/* 推荐结果 */
+.ai-loading {
+  margin-top: 1.2rem;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+.ai-error {
+  margin-top: 1.2rem;
+  padding: 0.7rem 0.9rem;
+  background: color-mix(in srgb, var(--vermilion) 8%, var(--paper-soft));
+  border-left: 3px solid var(--vermilion);
+  color: var(--vermilion-deep);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.ai-error ul {
+  margin: 0.4rem 0 0 1.2rem;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+.ai-empty {
+  margin-top: 1.2rem;
+  color: var(--ink-mute);
+  font-size: 0.9rem;
+}
+/* irrelevant 输入：友好引导，比 ai-error 温和（不用朱砂色） */
+.ai-hint {
+  margin-top: 1.2rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--paper-soft);
+  border-left: 3px solid var(--ink-soft);
+  color: var(--ink);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+.ai-recs__by {
+  margin: 1.4rem 0 0.6rem;
+  font-size: 0.82rem;
+  color: var(--ink-mute);
+  letter-spacing: 0.05em;
+}
+.ai-recs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: ai-rec;
+}
+.ai-rec {
+  position: relative;
+  padding: 0.9rem 0 0.9rem 2rem;
+  border-bottom: 1px solid var(--rule-soft);
+  counter-increment: ai-rec;
+}
+.ai-rec::before {
+  content: counter(ai-rec, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0.95rem;
+  font-size: 0.78rem;
+  color: var(--ink-mute);
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
+}
+.ai-rec:last-child {
+  border-bottom: 0;
+}
+.ai-rec__head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink);
+}
+.ai-rec__head:hover .ai-rec__name {
+  color: var(--vermilion);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ai-rec__code {
+  font-size: 0.78rem;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+.ai-rec__name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.ai-rec__path {
+  font-size: 0.78rem;
+  color: var(--ink-mute);
+}
+.ai-rec__reason {
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--ink-soft);
 }
 
 </style>
@@ -1447,6 +1626,11 @@ a.intro__school-name:hover {
       <kbd class="search__hint" aria-hidden="true">/</kbd>
     </form>
 
+    <button type="button" class="site-header__notes" id="open-ai" aria-haspopup="dialog">
+      <span aria-hidden="true">AI 推荐</span>
+      <span class="visually-hidden">使用 AI 为我推荐适合的专业</span>
+    </button>
+
     <button type="button" class="site-header__notes" id="open-notes" aria-haspopup="dialog">
       <span aria-hidden="true">凡例</span>
       <span class="visually-hidden">查看专业目录的编排说明</span>
@@ -1458,10 +1642,6 @@ a.intro__school-name:hover {
 
 <footer class="site-footer" role="contentinfo">
   <div class="site-footer__inner">
-    <p class="site-footer__editor-line">
-      <span class="site-footer__editor">杨　佳</span>
-      <span class="site-footer__affil">北京市第八中学</span>
-    </p>
     <p class="site-footer__source-line">
       资料来源
       <a href="http://www.moe.gov.cn/" target="_blank" rel="noopener">中华人民共和国教育部</a>
@@ -2430,6 +2610,167 @@ window.UNIVERSITIES = {"provinces":{"11":"北京","12":"天津","13":"河北","1
 
   window.addEventListener("hashchange", render);
   render();
+
+  // 暴露最小 helper 给 ai.js 复用（打开抽屉 / 跳详情）
+  window.__app = {
+    openMajor: openMajorDetail,
+    openDrawer,
+    closeDrawer,
+  };
+})();
+
+</script>
+<script>
+/* AI 专业推荐 — 极简表单 + 调用 + 渲染。复用 #drawer 显示，关闭/Esc/scrim 由 app.js 已有委托处理。 */
+(function () {
+  "use strict";
+
+  const btn = document.getElementById("open-ai");
+  if (!btn) return;
+
+  const drawer = document.getElementById("drawer");
+  const drawerBody = document.getElementById("drawer-body");
+  if (!drawer || !drawerBody) return;
+
+  // 本次会话内缓存上一次的 panel HTML（含表单 + 结果），
+  // 这样用户点专业详情跳转、关闭后再点 AI 按钮还能看到推荐列表
+  let lastPanelHTML = null;
+
+  btn.addEventListener("click", openAIPanel);
+
+  function openAIPanel() {
+    renderPanel(lastPanelHTML || renderForm());
+    if (window.__app && typeof window.__app.openDrawer === "function") {
+      window.__app.openDrawer(drawer);
+    } else {
+      drawer.hidden = false;
+      drawer.setAttribute("aria-hidden", "false");
+      drawer.classList.add("is-open");
+    }
+  }
+
+  // 写入 HTML 并把表单事件挂上去（恢复缓存时也要重新 bind）
+  function renderPanel(html) {
+    drawerBody.innerHTML = html;
+    const form = document.getElementById("ai-form");
+    if (form) form.addEventListener("submit", handleSubmit);
+  }
+
+  function renderForm() {
+    return `
+      <section class="ai-panel">
+        <h2 class="ai-panel__title" id="drawer-title">AI 推荐适合我的专业</h2>
+        <p class="ai-panel__hint">
+          说说你的兴趣、擅长科目、性格或未来想做什么，AI 会从 883 个本科专业里挑出几个适合你的方向。
+        </p>
+        <form id="ai-form" class="ai-form" autocomplete="off">
+          <textarea
+            name="interest"
+            rows="5"
+            maxlength="500"
+            required
+            placeholder="例：我数学物理都不错，喜欢动手做项目、不太喜欢死记硬背，对人工智能和机器人感兴趣…"></textarea>
+          <div class="ai-form__row">
+            <button type="submit" class="ai-submit">找适合我的专业</button>
+          </div>
+        </form>
+        <p class="ai-disclaimer">推荐由 AI 生成，仅作启发，请结合老师/家长意见综合判断。</p>
+        <div id="ai-result"></div>
+      </section>`;
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const interest = e.target.interest.value.trim();
+    const result = document.getElementById("ai-result");
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = "AI 思考中…";
+    result.innerHTML = '<p class="ai-loading">正在为你寻找匹配的专业，约需 5-10 秒…</p>';
+
+    let shouldCache = false; // 只有成功推荐才缓存 panel；irrelevant/错误都不缓存
+    try {
+      const resp = await fetch("/api/recommend", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ interest }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        // 把后端 detail 留给开发者排查（console），不直接暴露给同学
+        console.warn("ai recommend failed:", data);
+        const friendly = resp.status === 503
+          ? "AI 暂时忙不过来，请稍等几秒后再试一下。"
+          : (data.error || "AI 暂时不可用，请稍后再试。");
+        result.innerHTML = `<div class="ai-hint">${escapeHTML(friendly)}</div>`;
+        return;
+      }
+      if (data.irrelevant) {
+        result.innerHTML = `<div class="ai-hint">${escapeHTML(data.hint || "请告诉我你的兴趣、擅长科目或未来想做什么，我才能为你推荐适合的专业。")}</div>`;
+      } else {
+        result.innerHTML = renderRecs(data.recs);
+        shouldCache = true;
+      }
+    } catch (err) {
+      console.warn("ai recommend network error:", err);
+      result.innerHTML = '<div class="ai-hint">网络似乎出了点问题，请检查后再试一次。</div>';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "重新推荐";
+      // 一定要在按钮状态恢复之后再缓存，否则缓存里按钮会卡在 "AI 思考中…"
+      if (shouldCache) lastPanelHTML = drawerBody.innerHTML;
+    }
+  }
+
+  function renderRecs(recs) {
+    if (!recs || !recs.length) {
+      return '<p class="ai-empty">未能给出推荐，请换一种描述试试。</p>';
+    }
+    const head = `<p class="ai-recs__by">为你推荐 ${recs.length} 个方向</p>`;
+    const items = recs.map(r => {
+      const triple = lookupMajor(r.code);
+      if (!triple) return "";
+      return `<li class="ai-rec">
+        <button type="button" class="ai-rec__head" data-code="${r.code}">
+          <span class="ai-rec__code">${r.code}</span>
+          <span class="ai-rec__name">${escapeHTML(triple.m.name)}</span>
+          <span class="ai-rec__path">${escapeHTML(triple.cat.name)} · ${escapeHTML(triple.cls.name)}</span>
+        </button>
+        <p class="ai-rec__reason">${escapeHTML(r.reason)}</p>
+      </li>`;
+    }).filter(Boolean).join("");
+    return head + `<ol class="ai-recs">${items}</ol>`;
+  }
+
+  function lookupMajor(code) {
+    const data = window.MAJORS_DATA;
+    if (!data) return null;
+    for (const cat of data.categories) {
+      for (const cls of cat.classes) {
+        for (const m of cls.majors) {
+          if (m.code === code) return { m, cat, cls };
+        }
+      }
+    }
+    return null;
+  }
+
+  // 事件委托：点推荐项 → 调 app.js 暴露的函数打开专业详情
+  // （AI 抽屉 HTML 已经缓存到 lastPanelHTML，用户关掉详情再点 AI 就能恢复）
+  document.addEventListener("click", (e) => {
+    const head = e.target.closest && e.target.closest(".ai-rec__head");
+    if (!head) return;
+    const triple = lookupMajor(head.dataset.code);
+    if (triple && window.__app && typeof window.__app.openMajor === "function") {
+      window.__app.openMajor(triple.m, triple.cat, triple.cls);
+    }
+  });
+
+  function escapeHTML(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, c =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+    );
+  }
 })();
 
 </script>

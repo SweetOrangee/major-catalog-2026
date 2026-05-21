@@ -65,6 +65,7 @@
     submitBtn.textContent = "AI 思考中…";
     result.innerHTML = '<p class="ai-loading">正在为你寻找匹配的专业，约需 5-10 秒…</p>';
 
+    let shouldCache = false; // 只有成功推荐才缓存 panel；irrelevant/错误都不缓存
     try {
       const resp = await fetch("/api/recommend", {
         method: "POST",
@@ -73,21 +74,28 @@
       });
       const data = await resp.json();
       if (!resp.ok) {
-        const detail = Array.isArray(data.detail) ? "<ul>" + data.detail.map(d => `<li>${escapeHTML(d)}</li>`).join("") + "</ul>" : "";
-        throw new Error((data.error || "请求失败") + detail);
+        // 把后端 detail 留给开发者排查（console），不直接暴露给同学
+        console.warn("ai recommend failed:", data);
+        const friendly = resp.status === 503
+          ? "AI 暂时忙不过来，请稍等几秒后再试一下。"
+          : (data.error || "AI 暂时不可用，请稍后再试。");
+        result.innerHTML = `<div class="ai-hint">${escapeHTML(friendly)}</div>`;
+        return;
       }
       if (data.irrelevant) {
-        // 无关输入：展示固定引导文案；不缓存，让下次点 AI 回到全新表单
         result.innerHTML = `<div class="ai-hint">${escapeHTML(data.hint || "请告诉我你的兴趣、擅长科目或未来想做什么，我才能为你推荐适合的专业。")}</div>`;
       } else {
         result.innerHTML = renderRecs(data.recs);
-        lastPanelHTML = drawerBody.innerHTML;
+        shouldCache = true;
       }
     } catch (err) {
-      result.innerHTML = `<div class="ai-error">${err.message}</div>`;
+      console.warn("ai recommend network error:", err);
+      result.innerHTML = '<div class="ai-hint">网络似乎出了点问题，请检查后再试一次。</div>';
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = "重新推荐";
+      // 一定要在按钮状态恢复之后再缓存，否则缓存里按钮会卡在 "AI 思考中…"
+      if (shouldCache) lastPanelHTML = drawerBody.innerHTML;
     }
   }
 

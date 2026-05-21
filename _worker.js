@@ -40,6 +40,15 @@ async function handleRecommend(request, env) {
               : provider === "zhipu"  ? ["zhipu"]
               : ["zhipu", "gemini"];
 
+  // 简易日志：记录每个请求的 input（截断 300 字），便于事后调试和数据分析
+  // 看法：本地 `npx wrangler tail` 实时滚 / Cloudflare Dashboard → Worker → Logs (30 天)
+  const reqLog = {
+    t: new Date().toISOString(),
+    ip: request.headers.get("cf-connecting-ip") || "",
+    interest: interest.slice(0, 300),
+  };
+  console.log("[ai-in]", JSON.stringify(reqLog));
+
   let majors;
   try {
     const majorsURL = new URL("/data/majors-mini.json", request.url);
@@ -68,6 +77,7 @@ async function handleRecommend(request, env) {
 
       // LLM 判定输入跟选专业无关，直接走引导路径（HTTP 200，让前端友好展示）
       if (parsed && parsed.irrelevant === true) {
+        console.log("[ai-out]", JSON.stringify({ ip: reqLog.ip, provider: p, irrelevant: true }));
         return jsonResp({
           irrelevant: true,
           hint: "请告诉我你的兴趣、擅长科目或未来想做什么，我才能为你推荐适合的专业。",
@@ -89,13 +99,23 @@ async function handleRecommend(request, env) {
         .filter(Boolean)
         .slice(0, 4);
       if (valid.length >= 2) {
+        console.log("[ai-out]", JSON.stringify({
+          ip: reqLog.ip,
+          provider: p,
+          recs: valid.map(v => `${v.code} ${v.name}`),
+        }));
         return jsonResp({ recs: valid, provider: p });
       }
       errors.push(`${p}: 有效推荐不足 (${valid.length}/${recs.length})，未命中名: ${rawNames.filter(n => !byName.get(n) && !byNorm.get(normalizeName(n))).slice(0, 5).join("｜")}`);
     } catch (e) {
       errors.push(`${p}: ${e.message}`);
+      // 限流类错误 fail-fast：下一个 provider 大概率也救不了，让用户尽快看到失败、重试一次
+      if (/\b(429|rate.?limit|quota|too\s*many)\b/i.test(e.message)) {
+        break;
+      }
     }
   }
+  console.warn("[ai-err]", JSON.stringify({ ip: reqLog.ip, errors }));
   return jsonResp({ error: "AI 推荐暂时不可用，请稍后再试", detail: errors }, 503);
 }
 

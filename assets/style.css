@@ -1367,24 +1367,7 @@ a.intro__school-name:hover {
   margin: 0 auto;
 }
 
-/* 第一行：编者 — 用古籍版权页"撰者+机构+编"的句式 */
-.site-footer__editor-line {
-  margin: 0 0 0.6em;
-  font-family: var(--font-serif);
-  font-size: 0.95rem;
-  color: var(--ink);
-}
-.site-footer__editor {
-  font-weight: 700;
-  letter-spacing: 0.45em;
-  margin-right: 0.8em;
-}
-.site-footer__affil {
-  color: var(--ink-soft);
-  letter-spacing: 0.08em;
-  margin-right: 0.4em;
-}
-/* 第二行：数据来源 — 整体一行，无前缀错位问题 */
+/* 数据来源行 */
 .site-footer__source-line {
   margin: 0;
   font-family: var(--font-serif);
