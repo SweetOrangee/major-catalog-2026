@@ -1,25 +1,37 @@
 /**
- * Cloudflare Pages Function: 本科专业 AI 推荐
+ * Cloudflare Workers 入口（Workers + Static Assets 模型）
  *
- * POST /api/recommend
- *   body: { interest: string, provider?: 'auto' | 'zhipu' | 'gemini' }
- *   resp: { recs: [{code, reason}], provider: 'zhipu' | 'gemini' }
- *      or { error, detail? } 4xx/5xx
+ * 路由：
+ *   POST /api/recommend  → 调智谱 / Gemini，返回 AI 推荐
+ *   其它路径             → 交给 ASSETS（仓库根目录的静态资源）
  *
- * 主调智谱 GLM-4-Flash（完全免费），auto 模式失败 fallback 到 Gemini 2.5 Flash-Lite。
- * 环境变量：ZHIPU_KEY、GEMINI_KEY（在 Pages Settings 配，Production + Preview 都要）。
+ * 需要在 Worker 项目 Settings → Variables and Secrets 配置：
+ *   ZHIPU_KEY、GEMINI_KEY
  */
 
-export async function onRequestPost(context) {
-  const { request, env } = context;
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
 
+    if (url.pathname === "/api/recommend") {
+      if (request.method === "POST") return handleRecommend(request, env);
+      return jsonResp({ error: "Method Not Allowed", hint: "use POST" }, 405);
+    }
+
+    return env.ASSETS.fetch(request);
+  },
+};
+
+// ---------- AI 推荐核心 ----------
+
+async function handleRecommend(request, env) {
   let body;
   try { body = await request.json(); }
-  catch { return json({ error: "请求体不是合法 JSON" }, 400); }
+  catch { return jsonResp({ error: "请求体不是合法 JSON" }, 400); }
 
   const interest = String(body.interest || "").trim().slice(0, 500);
   if (interest.length < 5) {
-    return json({ error: "请多说几句你的兴趣（至少 5 个字）" }, 400);
+    return jsonResp({ error: "请多说几句你的兴趣（至少 5 个字）" }, 400);
   }
 
   const provider = String(body.provider || "auto").toLowerCase();
@@ -27,7 +39,7 @@ export async function onRequestPost(context) {
               : provider === "zhipu"  ? ["zhipu"]
               : ["zhipu", "gemini"];
 
-  // 站内拿专业精简表
+  // 拉精简专业表
   let majors;
   try {
     const majorsURL = new URL("/data/majors-mini.json", request.url);
@@ -35,7 +47,7 @@ export async function onRequestPost(context) {
     if (!resp.ok) throw new Error(`assets http ${resp.status}`);
     majors = await resp.json();
   } catch (e) {
-    return json({ error: "专业数据加载失败：" + e.message }, 500);
+    return jsonResp({ error: "专业数据加载失败：" + e.message }, 500);
   }
   const codeSet = new Set(majors.map(m => m.code));
 
@@ -55,24 +67,19 @@ export async function onRequestPost(context) {
         .filter(r => r && codeSet.has(String(r.code)) && r.reason)
         .slice(0, 8);
       if (valid.length >= 3) {
-        return json({ recs: valid, provider: p });
+        return jsonResp({ recs: valid, provider: p });
       }
       errors.push(`${p}: 有效推荐不足 (${valid.length})`);
     } catch (e) {
       errors.push(`${p}: ${e.message}`);
     }
   }
-  return json({ error: "AI 推荐暂时不可用", detail: errors }, 503);
-}
-
-// GET 一下返回简单提示，便于排查路由
-export async function onRequestGet() {
-  return json({ error: "Method Not Allowed", hint: "use POST" }, 405);
+  return jsonResp({ error: "AI 推荐暂时不可用", detail: errors }, 503);
 }
 
 // ---------- helpers ----------
 
-function json(obj, status = 200) {
+function jsonResp(obj, status = 200) {
   return new Response(JSON.stringify(obj), {
     status,
     headers: { "content-type": "application/json; charset=utf-8" },
@@ -145,7 +152,6 @@ async function callGemini(prompt, apiKey) {
 }
 
 function parseRecsJSON(content, label) {
-  // 兜底剥 markdown 围栏 ```json ... ```
   const cleaned = String(content).trim()
     .replace(/^```(?:json)?\s*/i, "")
     .replace(/```\s*$/i, "");
