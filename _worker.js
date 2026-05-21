@@ -35,10 +35,11 @@ async function handleRecommend(request, env) {
   }
 
   const provider = String(body.provider || "auto").toLowerCase();
-  // auto：智谱无限额度优先，Gemini（3.1 flash-lite，500 RPD）兜底
+  // auto：Gemini 推荐更细分（3-4 个 + 跨学科），优先用；
+  // 限流/挂掉时自动降级智谱（无限额度兜底）。两家配额独立，所以不做 fail-fast。
   const order = provider === "gemini" ? ["gemini"]
               : provider === "zhipu"  ? ["zhipu"]
-              : ["zhipu", "gemini"];
+              : ["gemini", "zhipu"];
 
   // 日志：合规起见不记录用户输入原文、不记录 IP；
   // 只保留时间戳、输入长度、provider、最终推荐结果等元数据，足够 debug。
@@ -110,10 +111,7 @@ async function handleRecommend(request, env) {
       errors.push(`${p}: 有效推荐不足 (${valid.length}/${recs.length})，未命中名: ${rawNames.filter(n => !byName.get(n) && !byNorm.get(normalizeName(n))).slice(0, 5).join("｜")}`);
     } catch (e) {
       errors.push(`${p}: ${e.message}`);
-      // 限流类错误 fail-fast：下一个 provider 大概率也救不了，让用户尽快看到失败、重试一次
-      if (/\b(429|rate.?limit|quota|too\s*many)\b/i.test(e.message)) {
-        break;
-      }
+      // 不做 fail-fast：两家 provider 配额独立，应让循环自然 fallback 到下一家
     }
   }
   console.warn("[ai-err]", JSON.stringify({ ...logCtx, errors }));
