@@ -35,11 +35,11 @@ async function handleRecommend(request, env) {
   }
 
   const provider = String(body.provider || "auto").toLowerCase();
+  // auto 默认 Gemini 优先（推荐质量更稳）；智谱无限额度做 fallback
   const order = provider === "gemini" ? ["gemini"]
               : provider === "zhipu"  ? ["zhipu"]
-              : ["zhipu", "gemini"];
+              : ["gemini", "zhipu"];
 
-  // 拉精简专业表
   let majors;
   try {
     const majorsURL = new URL("/data/majors-mini.json", request.url);
@@ -49,10 +49,11 @@ async function handleRecommend(request, env) {
   } catch (e) {
     return jsonResp({ error: "专业数据加载失败：" + e.message }, 500);
   }
-  const codeSet = new Set(majors.map(m => m.code));
+  // 用专业名反查 code（883 条本科专业名 100% 唯一，能极大降低 code 幻觉）
+  const byName = new Map(majors.map(m => [m.name, m]));
 
   const majorsText = majors.map(m =>
-    `${m.code} ${m.name}（${m.categoryName} / ${m.className}）`
+    `${m.name}（${m.categoryName}-${m.className}）`
   ).join("\n");
 
   const prompt = buildPrompt(interest, majorsText);
@@ -64,7 +65,13 @@ async function handleRecommend(request, env) {
         ? await callZhipu(prompt, env.ZHIPU_KEY)
         : await callGemini(prompt, env.GEMINI_KEY);
       const valid = recs
-        .filter(r => r && codeSet.has(String(r.code)) && r.reason)
+        .map(r => {
+          const name = String(r?.name || "").trim();
+          const m = byName.get(name);
+          if (!m || !r.reason) return null;
+          return { code: m.code, name: m.name, reason: String(r.reason).slice(0, 200) };
+        })
+        .filter(Boolean)
         .slice(0, 8);
       if (valid.length >= 3) {
         return jsonResp({ recs: valid, provider: p });
@@ -74,7 +81,7 @@ async function handleRecommend(request, env) {
       errors.push(`${p}: ${e.message}`);
     }
   }
-  return jsonResp({ error: "AI 推荐暂时不可用", detail: errors }, 503);
+  return jsonResp({ error: "AI 推荐暂时不可用，请稍后再试", detail: errors }, 503);
 }
 
 // ---------- helpers ----------
@@ -92,16 +99,18 @@ function buildPrompt(interest, majorsText) {
 ${interest}
 """
 
-候选本科专业列表（你只能从下面挑，不要编造）：
+候选本科专业名称列表（每行一个，格式为「专业名（门类-类别）」）：
 ${majorsText}
 
-请挑选 5-8 个最匹配的本科专业，严格按下面格式输出 JSON，不要任何额外文字、不要 markdown 围栏：
-{"recs":[{"code":"<候选列表里的代码>","reason":"<一两句具体理由>"}]}
+任务：从上面候选列表里挑出 5-8 个最匹配学生描述的本科专业。
+
+严格输出 JSON，不要任何额外文字、不要 markdown 围栏：
+{"recs":[{"name":"<候选列表里出现过的完整专业名，逐字复制>","reason":"<一两句具体理由>"}]}
 
 要求：
-- code 必须严格来自候选列表
-- reason 要具体贴合学生描述，避免空话；不要给绝对化承诺（如"你一定能..."、"未来一定高薪"）
-- 涉及敏感话题（健康、家庭等）请友好引导询问老师或家长`;
+- name 必须**逐字**来自候选列表（包括"工程"、"学"等后缀，不要简称、不要编造）
+- reason 要具体贴合学生描述，避免空话；不要绝对化承诺（如"你一定能..."、"未来一定高薪"）
+- 涉及健康/家庭等敏感话题请友好引导询问老师或家长`;
 }
 
 async function callZhipu(prompt, apiKey) {
