@@ -51,7 +51,10 @@
             <button type="submit" class="ai-submit">找适合我的专业</button>
           </div>
         </form>
-        <p class="ai-disclaimer">推荐由 AI 生成，仅作启发，请结合老师/家长意见综合判断。</p>
+        <p class="ai-disclaimer">
+          AI 推荐仅供参考启发，可能存在偏差，不构成正式选专业建议。<br>
+          输入内容会经第三方 AI 服务处理，请勿填写身份信息、家庭、健康等敏感内容；选专业等重要决定请与老师或家长共同讨论。
+        </p>
         <div id="ai-result"></div>
       </section>`;
   }

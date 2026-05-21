@@ -40,14 +40,14 @@ async function handleRecommend(request, env) {
               : provider === "zhipu"  ? ["zhipu"]
               : ["zhipu", "gemini"];
 
-  // 简易日志：记录每个请求的 input（截断 300 字），便于事后调试和数据分析
-  // 看法：本地 `npx wrangler tail` 实时滚 / Cloudflare Dashboard → Worker → Logs (30 天)
-  const reqLog = {
+  // 日志：合规起见不记录用户输入原文、不记录 IP；
+  // 只保留时间戳、输入长度、provider、最终推荐结果等元数据，足够 debug。
+  // 看：本地 `npx wrangler tail` 实时滚 / Cloudflare Dashboard → Worker → Logs (30 天)
+  const logCtx = {
     t: new Date().toISOString(),
-    ip: request.headers.get("cf-connecting-ip") || "",
-    interest: interest.slice(0, 300),
+    inputLen: interest.length,
   };
-  console.log("[ai-in]", JSON.stringify(reqLog));
+  console.log("[ai-in]", JSON.stringify(logCtx));
 
   let majors;
   try {
@@ -77,7 +77,7 @@ async function handleRecommend(request, env) {
 
       // LLM 判定输入跟选专业无关，直接走引导路径（HTTP 200，让前端友好展示）
       if (parsed && parsed.irrelevant === true) {
-        console.log("[ai-out]", JSON.stringify({ ip: reqLog.ip, provider: p, irrelevant: true }));
+        console.log("[ai-out]", JSON.stringify({ ...logCtx, provider: p, irrelevant: true }));
         return jsonResp({
           irrelevant: true,
           hint: "请告诉我你的兴趣、擅长科目或未来想做什么，我才能为你推荐适合的专业。",
@@ -100,8 +100,9 @@ async function handleRecommend(request, env) {
         .slice(0, 4);
       if (valid.length >= 2) {
         console.log("[ai-out]", JSON.stringify({
-          ip: reqLog.ip,
+          ...logCtx,
           provider: p,
+          // 只存 code+name，不存 reason（reason 常 echo 用户输入）
           recs: valid.map(v => `${v.code} ${v.name}`),
         }));
         return jsonResp({ recs: valid, provider: p });
@@ -115,7 +116,7 @@ async function handleRecommend(request, env) {
       }
     }
   }
-  console.warn("[ai-err]", JSON.stringify({ ip: reqLog.ip, errors }));
+  console.warn("[ai-err]", JSON.stringify({ ...logCtx, errors }));
   return jsonResp({ error: "AI 推荐暂时不可用，请稍后再试", detail: errors }, 503);
 }
 
