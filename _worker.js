@@ -50,7 +50,9 @@ async function handleRecommend(request, env) {
     return jsonResp({ error: "专业数据加载失败：" + e.message }, 500);
   }
   // 用专业名反查 code（883 条本科专业名 100% 唯一，能极大降低 code 幻觉）
+  // 同时建 normalize 后的反查表，容忍模型加空格/换标点
   const byName = new Map(majors.map(m => [m.name, m]));
+  const byNorm = new Map(majors.map(m => [normalizeName(m.name), m]));
 
   const majorsText = majors.map(m =>
     `${m.name}（${m.categoryName}-${m.className}）`
@@ -64,11 +66,15 @@ async function handleRecommend(request, env) {
       const recs = p === "zhipu"
         ? await callZhipu(prompt, env.ZHIPU_KEY)
         : await callGemini(prompt, env.GEMINI_KEY);
+      const rawNames = []; // 调试用
       const valid = recs
         .map(r => {
           const name = String(r?.name || "").trim();
-          const m = byName.get(name);
-          if (!m || !r.reason) return null;
+          rawNames.push(name);
+          if (!r.reason) return null;
+          // 精确 → 模糊（去标点/空格）匹配
+          const m = byName.get(name) || byNorm.get(normalizeName(name));
+          if (!m) return null;
           return { code: m.code, name: m.name, reason: String(r.reason).slice(0, 200) };
         })
         .filter(Boolean)
@@ -76,12 +82,18 @@ async function handleRecommend(request, env) {
       if (valid.length >= 3) {
         return jsonResp({ recs: valid, provider: p });
       }
-      errors.push(`${p}: 有效推荐不足 (${valid.length})`);
+      errors.push(`${p}: 有效推荐不足 (${valid.length}/${recs.length})，未命中名: ${rawNames.filter(n => !byName.get(n) && !byNorm.get(normalizeName(n))).slice(0, 5).join("｜")}`);
     } catch (e) {
       errors.push(`${p}: ${e.message}`);
     }
   }
   return jsonResp({ error: "AI 推荐暂时不可用，请稍后再试", detail: errors }, 503);
+}
+
+function normalizeName(s) {
+  return String(s || "")
+    .toLowerCase()
+    .replace(/[\s\u3000、，,。.（）()【】\[\]《》<>“”"'·\-—_:：;；!！?？/\\]/g, "");
 }
 
 // ---------- helpers ----------
