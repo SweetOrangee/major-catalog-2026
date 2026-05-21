@@ -16,6 +16,10 @@ __pycache__/
 .venv/
 venv/
 
+# Cloudflare wrangler 本地缓存（含账户 id、token 等）
+.wrangler/
+.dev.vars
+
 # 系统 / 编辑器
 .DS_Store
 .idea/
