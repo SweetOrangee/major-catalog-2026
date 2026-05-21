@@ -1422,6 +1422,15 @@ a.intro__school-name:hover {
 .site-footer__dot {
   color: var(--rule);
 }
+.site-footer__disclaimer {
+  margin: 0.6em 0 0;
+  font-family: var(--font-serif);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+  color: var(--ink-mute);
+  opacity: 0.7;
+}
 
 /* ---------- AI 推荐面板（复用 drawer 内部容器） ---------- */
 .ai-panel {
