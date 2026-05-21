@@ -1522,6 +1522,16 @@ a.intro__school-name:hover {
   color: var(--ink-mute);
   font-size: 0.9rem;
 }
+/* irrelevant 输入：友好引导，比 ai-error 温和（不用朱砂色） */
+.ai-hint {
+  margin-top: 1.2rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--paper-soft);
+  border-left: 3px solid var(--ink-soft);
+  color: var(--ink);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
 .ai-recs__by {
   margin: 1.4rem 0 0.6rem;
   font-size: 0.82rem;

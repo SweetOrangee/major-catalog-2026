@@ -9,11 +9,14 @@
   const drawerBody = document.getElementById("drawer-body");
   if (!drawer || !drawerBody) return;
 
+  // 本次会话内缓存上一次的 panel HTML（含表单 + 结果），
+  // 这样用户点专业详情跳转、关闭后再点 AI 按钮还能看到推荐列表
+  let lastPanelHTML = null;
+
   btn.addEventListener("click", openAIPanel);
 
   function openAIPanel() {
-    drawerBody.innerHTML = renderForm();
-    // 调用 app.js 暴露的 openDrawer；若不可用就 fallback 直接显示
+    renderPanel(lastPanelHTML || renderForm());
     if (window.__app && typeof window.__app.openDrawer === "function") {
       window.__app.openDrawer(drawer);
     } else {
@@ -21,6 +24,11 @@
       drawer.setAttribute("aria-hidden", "false");
       drawer.classList.add("is-open");
     }
+  }
+
+  // 写入 HTML 并把表单事件挂上去（恢复缓存时也要重新 bind）
+  function renderPanel(html) {
+    drawerBody.innerHTML = html;
     const form = document.getElementById("ai-form");
     if (form) form.addEventListener("submit", handleSubmit);
   }
@@ -40,14 +48,6 @@
             required
             placeholder="例：我数学物理都不错，喜欢动手做项目、不太喜欢死记硬背，对人工智能和机器人感兴趣…"></textarea>
           <div class="ai-form__row">
-            <label class="ai-form__provider">
-              <span>模型</span>
-              <select name="provider">
-                <option value="auto">自动</option>
-                <option value="zhipu">智谱 GLM-4-Flash</option>
-                <option value="gemini">Gemini 2.5 Flash-Lite</option>
-              </select>
-            </label>
             <button type="submit" class="ai-submit">找适合我的专业</button>
           </div>
         </form>
@@ -59,7 +59,6 @@
   async function handleSubmit(e) {
     e.preventDefault();
     const interest = e.target.interest.value.trim();
-    const provider = e.target.provider.value;
     const result = document.getElementById("ai-result");
     const submitBtn = e.target.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
@@ -70,14 +69,20 @@
       const resp = await fetch("/api/recommend", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ interest, provider }),
+        body: JSON.stringify({ interest }),
       });
       const data = await resp.json();
       if (!resp.ok) {
         const detail = Array.isArray(data.detail) ? "<ul>" + data.detail.map(d => `<li>${escapeHTML(d)}</li>`).join("") + "</ul>" : "";
         throw new Error((data.error || "请求失败") + detail);
       }
-      result.innerHTML = renderRecs(data.recs, data.provider);
+      if (data.irrelevant) {
+        // 无关输入：展示固定引导文案；不缓存，让下次点 AI 回到全新表单
+        result.innerHTML = `<div class="ai-hint">${escapeHTML(data.hint || "请告诉我你的兴趣、擅长科目或未来想做什么，我才能为你推荐适合的专业。")}</div>`;
+      } else {
+        result.innerHTML = renderRecs(data.recs);
+        lastPanelHTML = drawerBody.innerHTML;
+      }
     } catch (err) {
       result.innerHTML = `<div class="ai-error">${err.message}</div>`;
     } finally {
@@ -86,16 +91,11 @@
     }
   }
 
-  function renderRecs(recs, providerUsed) {
+  function renderRecs(recs) {
     if (!recs || !recs.length) {
       return '<p class="ai-empty">未能给出推荐，请换一种描述试试。</p>';
     }
-    const providerLabel = providerUsed === "zhipu"
-      ? "智谱 GLM-4-Flash"
-      : providerUsed === "gemini"
-        ? "Gemini 2.5 Flash-Lite"
-        : "AI";
-    const head = `<p class="ai-recs__by">由 ${providerLabel} 推荐，共 ${recs.length} 个方向</p>`;
+    const head = `<p class="ai-recs__by">为你推荐 ${recs.length} 个方向</p>`;
     const items = recs.map(r => {
       const triple = lookupMajor(r.code);
       if (!triple) return "";
@@ -125,6 +125,7 @@
   }
 
   // 事件委托：点推荐项 → 调 app.js 暴露的函数打开专业详情
+  // （AI 抽屉 HTML 已经缓存到 lastPanelHTML，用户关掉详情再点 AI 就能恢复）
   document.addEventListener("click", (e) => {
     const head = e.target.closest && e.target.closest(".ai-rec__head");
     if (!head) return;
