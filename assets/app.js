@@ -815,7 +815,10 @@
     }
   });
 
-  $("#open-notes").addEventListener("click", openNotes);
+  // #open-notes 现在在 tpl-home 模板里（首次 DOMContentLoaded 时还没渲染），用事件委托
+  document.addEventListener("click", (e) => {
+    if (e.target.closest && e.target.closest("#open-notes")) openNotes();
+  });
 
   // ---------- 主渲染 ----------
   function render() {
