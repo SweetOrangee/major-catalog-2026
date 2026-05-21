@@ -205,13 +205,6 @@ hr.rule--double::after {
   letter-spacing: 0.04em;
   transition: color 160ms ease;
 }
-.site-header__title-sub {
-  font-size: 0.7rem;
-  color: var(--ink-soft);
-  letter-spacing: var(--tracking-wide);
-  font-feature-settings: "tnum";
-}
-
 /* 搜索 */
 .search {
   position: relative;
@@ -977,7 +970,6 @@ mark.hl {
 }
 
 @media (max-width: 640px) {
-  .site-header__title-sub { display: none; }
   .search__hint { display: none; }
   .site-header__notes {
     padding: 0.5rem 0.6rem;
@@ -1135,41 +1127,190 @@ mark.hl {
   color: var(--vermilion);
 }
 
-/* 推荐院校 */
+/* 通用：分组标题旁的次要说明（如 "共 208 所"） */
+.intro__group-meta {
+  margin-left: 0.8em;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  font-weight: 400;
+}
+
+/* 开设院校（全量 + 分页 + 筛选） */
+.intro__schools-pager { font-size: 0.9rem; }
+
+.intro__schools-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5em var(--space-3);
+  margin-bottom: var(--space-3);
+}
+.intro__schools-search {
+  flex: 1;
+  min-width: 12em;
+  max-width: 16em;
+  font-family: var(--font-serif);
+  font-size: 0.86rem;
+  color: var(--ink);
+  background: var(--paper-soft);
+  border: 1px solid var(--rule);
+  border-radius: 1px;
+  padding: 0.35em 0.7em;
+  letter-spacing: 0.04em;
+  transition: border-color 0.15s;
+}
+.intro__schools-search:focus {
+  outline: none;
+  border-color: var(--ink-soft);
+}
+.intro__schools-search::placeholder {
+  color: var(--ink-mute);
+  letter-spacing: 0.06em;
+}
+.intro__schools-tags {
+  display: inline-flex;
+  gap: 0.3em;
+}
+.intro__schools-tag-btn {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  padding: 0.32em 0.7em;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-radius: 1px;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+.intro__schools-tag-btn:hover { color: var(--ink); border-color: var(--ink-soft); }
+.intro__schools-tag-btn.is-active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+.intro__schools-matched {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  margin-left: auto;
+}
+.intro__schools-empty {
+  padding: var(--space-4) 0;
+  text-align: center;
+  font-family: var(--font-serif);
+  color: var(--ink-mute);
+  font-size: 0.88rem;
+  border-bottom: 1px dotted var(--rule);
+}
 .intro__schools {
   list-style: none;
   margin: 0;
   padding: 0;
-  counter-reset: school;
-  display: grid;
-  gap: 0;
-  font-size: 0.9rem;
 }
-.intro__schools li {
-  counter-increment: school;
+.intro__school {
   display: grid;
-  grid-template-columns: 2em 1fr auto;
+  grid-template-columns: 3.6em 1fr auto;
   align-items: baseline;
   gap: var(--space-3);
-  padding: 0.5em 0;
+  padding: 0.55em 0;
   border-bottom: 1px dotted var(--rule);
 }
-.intro__schools li::before {
-  content: counter(school, decimal-leading-zero);
+.intro__school:last-child { border-bottom: 0; }
+.intro__school-code {
   font-family: var(--font-mono);
   font-size: 0.72rem;
   color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
 }
-.intro__schools li:last-child { border-bottom: 0; }
+.intro__school-main {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.55em;
+  min-width: 0;
+}
 .intro__school-name {
   font-family: var(--font-serif);
   color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
 }
-.intro__school-rank {
-  font-family: var(--font-serif);
-  font-variant-numeric: tabular-nums;
+a.intro__school-name:hover {
   color: var(--vermilion);
+  border-bottom-color: var(--vermilion);
+}
+.intro__school-meta {
+  font-family: var(--font-serif);
+  font-size: 0.78rem;
+  color: var(--ink-mute);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* 徽章：985 / 211 / 双一流 */
+.intro__school-badges {
+  display: inline-flex;
+  gap: 0.3em;
+  flex-wrap: wrap;
+}
+.intro__school-tag {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  line-height: 1;
+  padding: 0.28em 0.5em;
+  border-radius: 1px;
+  letter-spacing: 0.06em;
+  border: 1px solid currentColor;
+  background: var(--paper);
+}
+.intro__school-tag.tag-985    { color: var(--vermilion); }
+.intro__school-tag.tag-211    { color: var(--indigo); }
+.intro__school-tag.tag-syl    { color: #8C6A1F; }
+.intro__school-tag.tag-default{ color: var(--ink-mute); }
+
+/* 分页按钮 */
+.intro__schools-pagination {
+  margin-top: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+.intro__page-btn {
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  padding: 0.35em 0.95em;
+  border: 1px solid var(--rule);
+  background: var(--paper-soft);
+  color: var(--ink);
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  border-radius: 1px;
+  transition: background-color 0.15s, color 0.15s;
+}
+.intro__page-btn:not(:disabled):hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+.intro__page-btn:disabled {
+  color: var(--ink-mute);
+  background: transparent;
+  cursor: default;
+  opacity: 0.6;
+}
+.intro__page-info b {
   font-weight: 700;
+  color: var(--vermilion);
+  font-variant-numeric: tabular-nums;
 }
 
 /* 外链 + 来源 */
@@ -1211,4 +1352,57 @@ mark.hl {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ============================== 页脚 · 编者署名 ============================== */
+.site-footer {
+  margin-top: var(--space-7);
+  padding: var(--space-5) clamp(1rem, 3vw, 2rem) var(--space-6);
+  border-top: 3px double var(--rule);
+  background: var(--paper);
+  text-align: center;
+}
+.site-footer__inner {
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+/* 第一行：编者 — 用古籍版权页"撰者+机构+编"的句式 */
+.site-footer__editor-line {
+  margin: 0 0 0.6em;
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+.site-footer__editor {
+  font-weight: 700;
+  letter-spacing: 0.45em;
+  margin-right: 0.8em;
+}
+.site-footer__affil {
+  color: var(--ink-soft);
+  letter-spacing: 0.08em;
+  margin-right: 0.4em;
+}
+/* 第二行：数据来源 — 整体一行，无前缀错位问题 */
+.site-footer__source-line {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+.site-footer__source-line a {
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  margin: 0 0.3em;
+}
+.site-footer__source-line a:hover {
+  color: var(--vermilion);
+  border-bottom-color: var(--vermilion);
+}
+.site-footer__dot {
+  color: var(--rule);
 }

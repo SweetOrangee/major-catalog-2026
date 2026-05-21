@@ -8,6 +8,12 @@
     return;
   }
 
+  // 全国高校元数据，按 yxdm 索引
+  const UNIV = window.UNIVERSITIES || { provinces: {}, list: [] };
+  const UNIV_BY_YXDM = {};
+  for (const u of UNIV.list) UNIV_BY_YXDM[u.yxdm] = u;
+  const PROVINCE_BY_SSDM = UNIV.provinces || {};
+
   // ---------- 工具 ----------
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -70,7 +76,7 @@
   }
 
   function setTitle(suffix) {
-    const base = "本科专业目录 · 2026 · 教育部";
+    const base = "本科专业目录 · 2026";
     document.title = suffix ? `${suffix} · ${base}` : base;
   }
 
@@ -405,11 +411,13 @@
   // ---------- 专业介绍 ----------
   // intro 的形态由 scripts/merge_intro.py 决定：
   //   {specId, summary?, jyfx?, kyfx?, satisfaction?, scale?, gender?, schools?, year?, interpretation?}
-  // 渲染策略：解读 > 官方简介 > 就业/考研 > 在校生画像 > 满意度 > 推荐院校 > 外链
+  // 渲染顺序：官方简介 → 典型就业 → 在校生画像 → 考研方向 → 开设院校 → 外部专家解读
 
   function introHint(intro) {
     if (!intro) return "";
     if (intro.interpretation || intro.summary) return "查看介绍 →";
+    // 新专业暂无介绍文本，但有考研方向/学生规模/推荐院校等
+    if (intro.kyfx || intro.scale || intro.gender || intro.schools) return "查看资料 →";
     return "";
   }
 
@@ -423,10 +431,16 @@
     }
 
     const hasContent =
-      intro.summary || intro.interpretation || (intro.jyfx && intro.jyfx.length);
+      intro.summary ||
+      intro.interpretation ||
+      (intro.jyfx && intro.jyfx.length) ||
+      intro.kyfx ||
+      intro.scale ||
+      intro.gender ||
+      intro.schools;
 
     if (!hasContent) {
-      // 仅有 specId 兜底：多半是 2024 后新增专业，阳光高考也还没补介绍
+      // 完全没数据，多半是 2024 后新增专业，阳光高考也还没收录
       return `<section class="detail__section detail__section--intro">
         <h3>专业介绍</h3>
         <p class="placeholder">该专业为新设/年轻专业，详细介绍待官方补充。</p>
@@ -436,8 +450,9 @@
 
     const parts = [];
     if (intro.summary) parts.push(renderSummary(intro.summary));
-    parts.push(renderTagGroups(intro));
+    parts.push(renderJyfx(intro));
     parts.push(renderProfile(intro));
+    parts.push(renderKyfx(intro));
     parts.push(renderSchools(intro.schools));
     // 解读的三小节正文作为"详解"接在最下面，去掉作者/导语/标题等装饰
     if (intro.interpretation) parts.push(renderChapters(intro.interpretation.sections));
@@ -474,34 +489,33 @@
       </div>`;
   }
 
-  function renderTagGroups(intro) {
-    const blocks = [];
-    if (Array.isArray(intro.jyfx) && intro.jyfx.length) {
-      blocks.push(`
-        <div class="intro__group">
-          <h4 class="intro__group-title">典型就业方向</h4>
-          <ul class="intro__tags">
-            ${intro.jyfx.map((x) => `<li>${escapeHTML(x)}</li>`).join("")}
-          </ul>
-        </div>`);
-    }
-    if (Array.isArray(intro.kyfx) && intro.kyfx.length) {
-      blocks.push(`
-        <div class="intro__group">
-          <h4 class="intro__group-title">考研可关注的学科</h4>
-          <ul class="intro__tags intro__tags--soft">
-            ${intro.kyfx
-              .map(
-                (x) => `<li>
-                  <span class="intro__kyfx-code" translate="no">${escapeHTML(x.code || "")}</span>
-                  <span>${escapeHTML(x.name || "")}</span>
-                </li>`
-              )
-              .join("")}
-          </ul>
-        </div>`);
-    }
-    return blocks.join("");
+  function renderJyfx(intro) {
+    if (!Array.isArray(intro.jyfx) || !intro.jyfx.length) return "";
+    return `
+      <div class="intro__group">
+        <h4 class="intro__group-title">典型就业方向</h4>
+        <ul class="intro__tags">
+          ${intro.jyfx.map((x) => `<li>${escapeHTML(x)}</li>`).join("")}
+        </ul>
+      </div>`;
+  }
+
+  function renderKyfx(intro) {
+    if (!Array.isArray(intro.kyfx) || !intro.kyfx.length) return "";
+    return `
+      <div class="intro__group">
+        <h4 class="intro__group-title">考研可关注的学科</h4>
+        <ul class="intro__tags intro__tags--soft">
+          ${intro.kyfx
+            .map(
+              (x) => `<li>
+                <span class="intro__kyfx-code" translate="no">${escapeHTML(x.code || "")}</span>
+                <span>${escapeHTML(x.name || "")}</span>
+              </li>`
+            )
+            .join("")}
+        </ul>
+      </div>`;
   }
 
   function renderProfile(intro) {
@@ -525,23 +539,182 @@
       </div>`;
   }
 
-  function renderSchools(list) {
-    if (!Array.isArray(list) || !list.length) return "";
+  // ---------- 开设院校（每页 10 所 + 文本筛选 + 标签筛选） ----------
+  const SCHOOLS_PAGE_SIZE = 10;
+  const SCHOOLS_CACHE = {}; // id -> { yxdms, filtered, query, tags:Set, page }
+  let SCHOOLS_NEXT_ID = 0;
+
+  function renderSchools(schools) {
+    if (!schools || !Array.isArray(schools.list) || !schools.list.length) return "";
+    const id = ++SCHOOLS_NEXT_ID;
+    SCHOOLS_CACHE[id] = {
+      yxdms: schools.list,
+      filtered: schools.list,
+      query: "",
+      tags: new Set(),
+      page: 1,
+    };
+    const total = schools.total || schools.list.length;
+    const showSearch = schools.list.length > SCHOOLS_PAGE_SIZE;
     return `
       <div class="intro__group">
-        <h4 class="intro__group-title">开设院校推荐</h4>
-        <ol class="intro__schools">
-          ${list
-            .map(
-              (s) => `<li>
-                <span class="intro__school-name">${escapeHTML(s.name || "")}</span>
-                <b class="intro__school-rank">${Number(s.rank).toFixed(1)}</b>
-              </li>`
-            )
-            .join("")}
-        </ol>
+        <h4 class="intro__group-title">开设院校 <span class="intro__group-meta">共 ${total} 所</span></h4>
+        <div class="intro__schools-pager" data-cache="${id}">
+          ${showSearch ? `<div class="intro__schools-toolbar">
+            <input class="intro__schools-search" type="search" placeholder="搜院校名或省份…" />
+            <div class="intro__schools-tags">
+              <button class="intro__schools-tag-btn" data-tag="985">985</button>
+              <button class="intro__schools-tag-btn" data-tag="211">211</button>
+              <button class="intro__schools-tag-btn" data-tag="syl">双一流</button>
+            </div>
+            <span class="intro__schools-matched"></span>
+          </div>` : ""}
+          <div class="intro__schools-body">${renderSchoolsBody(id)}</div>
+        </div>
       </div>`;
   }
+
+  function renderSchoolsBody(id) {
+    const c = SCHOOLS_CACHE[id];
+    if (!c.filtered.length) {
+      return `<div class="intro__schools-empty">未匹配到院校</div>`;
+    }
+    const pages = Math.max(1, Math.ceil(c.filtered.length / SCHOOLS_PAGE_SIZE));
+    if (c.page > pages) c.page = pages;
+    return `
+      <ul class="intro__schools">${renderSchoolPage(c.filtered, c.page - 1)}</ul>
+      ${pages > 1 ? renderSchoolsPagination(c.page, pages) : ""}`;
+  }
+
+  function renderSchoolPage(yxdms, page0) {
+    const start = page0 * SCHOOLS_PAGE_SIZE;
+    return yxdms
+      .slice(start, start + SCHOOLS_PAGE_SIZE)
+      .map((yxdm) => renderSchoolItem(yxdm))
+      .join("");
+  }
+
+  function schoolMatchesTag(u, tag) {
+    const tags = u.tags || [];
+    if (tag === "985") return tags.includes("985");
+    if (tag === "211") return tags.includes("211");
+    if (tag === "syl") {
+      return !!u.syl || tags.some((t) => /一流大学|双一流/.test(t));
+    }
+    return false;
+  }
+
+  function filterSchools(yxdms, query, activeTags) {
+    const q = (query || "").trim();
+    const hasTags = activeTags && activeTags.size > 0;
+    if (!q && !hasTags) return yxdms;
+    return yxdms.filter((yxdm) => {
+      const u = UNIV_BY_YXDM[yxdm];
+      if (!u) return false;
+      if (q) {
+        const prov = PROVINCE_BY_SSDM[u.ssdm] || "";
+        if (!(u.name || "").includes(q) && !prov.includes(q)) return false;
+      }
+      if (hasTags) {
+        // 标签之间 OR：任一勾选标签匹配即可
+        let any = false;
+        for (const t of activeTags) {
+          if (schoolMatchesTag(u, t)) { any = true; break; }
+        }
+        if (!any) return false;
+      }
+      return true;
+    });
+  }
+
+  function renderSchoolItem(yxdm) {
+    const u = UNIV_BY_YXDM[yxdm];
+    if (!u) {
+      return `<li class="intro__school">
+        <span class="intro__school-code">${escapeHTML(yxdm)}</span>
+        <span class="intro__school-name">[未知]</span>
+      </li>`;
+    }
+    const prov = PROVINCE_BY_SSDM[u.ssdm] || "";
+    const tags = (u.tags && u.tags.length) ? u.tags : (u.syl ? ["双一流"] : []);
+    const badgeHTML = tags
+      .map((t) => `<span class="intro__school-tag tag-${tagClass(t)}">${escapeHTML(t)}</span>`)
+      .join("");
+    const name = escapeHTML(u.name || "");
+    const nameHTML = u.schid
+      ? `<a class="intro__school-name" href="https://gaokao.chsi.com.cn/sch/schoolInfo--schId-${escapeHTML(u.schid)}.dhtml" target="_blank" rel="noopener">${name}</a>`
+      : `<span class="intro__school-name">${name}</span>`;
+    return `<li class="intro__school">
+      <span class="intro__school-code">${escapeHTML(yxdm)}</span>
+      <span class="intro__school-main">
+        ${nameHTML}
+        ${badgeHTML ? `<span class="intro__school-badges">${badgeHTML}</span>` : ""}
+      </span>
+      <span class="intro__school-meta">${prov ? escapeHTML(prov) : ""}</span>
+    </li>`;
+  }
+
+  function tagClass(t) {
+    if (/985/.test(t)) return "985";
+    if (/211/.test(t)) return "211";
+    if (/双一流|一流大学|一流学科/.test(t)) return "syl";
+    return "default";
+  }
+
+  function renderSchoolsPagination(page, pages) {
+    return `<div class="intro__schools-pagination">
+      <button class="intro__page-btn" data-act="prev" ${page === 1 ? "disabled" : ""}>‹ 上一页</button>
+      <span class="intro__page-info">第 <b>${page}</b> / ${pages} 页</span>
+      <button class="intro__page-btn" data-act="next" ${page === pages ? "disabled" : ""}>下一页 ›</button>
+    </div>`;
+  }
+
+  // 事件委托：分页 / 搜索 / 标签筛选 共用一个 pager 状态
+  function refilterAndRerender(pager) {
+    const id = pager.dataset.cache;
+    const c = SCHOOLS_CACHE[id];
+    c.filtered = filterSchools(c.yxdms, c.query, c.tags);
+    c.page = 1;
+    pager.querySelector(".intro__schools-body").innerHTML = renderSchoolsBody(id);
+    const matched = pager.querySelector(".intro__schools-matched");
+    if (matched) {
+      const hasFilter = c.query || c.tags.size > 0;
+      matched.textContent = hasFilter ? `匹配 ${c.filtered.length} 所` : "";
+    }
+  }
+
+  document.addEventListener("click", (e) => {
+    // 标签筛选按钮
+    const tagBtn = e.target.closest(".intro__schools-tag-btn");
+    if (tagBtn) {
+      const pager = tagBtn.closest(".intro__schools-pager");
+      const c = SCHOOLS_CACHE[pager.dataset.cache];
+      const t = tagBtn.dataset.tag;
+      if (c.tags.has(t)) { c.tags.delete(t); tagBtn.classList.remove("is-active"); }
+      else { c.tags.add(t); tagBtn.classList.add("is-active"); }
+      refilterAndRerender(pager);
+      return;
+    }
+    // 分页按钮
+    const pageBtn = e.target.closest(".intro__schools-pagination .intro__page-btn");
+    if (pageBtn) {
+      const pager = pageBtn.closest(".intro__schools-pager");
+      const id = pager.dataset.cache;
+      const c = SCHOOLS_CACHE[id];
+      const pages = Math.max(1, Math.ceil(c.filtered.length / SCHOOLS_PAGE_SIZE));
+      if (pageBtn.dataset.act === "prev" && c.page > 1) c.page--;
+      else if (pageBtn.dataset.act === "next" && c.page < pages) c.page++;
+      else return;
+      pager.querySelector(".intro__schools-body").innerHTML = renderSchoolsBody(id);
+    }
+  });
+
+  document.addEventListener("input", (e) => {
+    if (!e.target.matches(".intro__schools-search")) return;
+    const pager = e.target.closest(".intro__schools-pager");
+    SCHOOLS_CACHE[pager.dataset.cache].query = e.target.value;
+    refilterAndRerender(pager);
+  });
 
   function renderIntroFooter(intro) {
     const specId = intro && intro.specId;
