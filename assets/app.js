@@ -837,4 +837,11 @@
 
   window.addEventListener("hashchange", render);
   render();
+
+  // 暴露最小 helper 给 ai.js 复用（打开抽屉 / 跳详情）
+  window.__app = {
+    openMajor: openMajorDetail,
+    openDrawer,
+    closeDrawer,
+  };
 })();

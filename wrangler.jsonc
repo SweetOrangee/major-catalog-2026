@@ -1,0 +1,10 @@
+{
+  "$schema": "https://unpkg.com/wrangler@latest/config-schema.json",
+  "name": "major-catalog-2026",
+  "main": "_worker.js",
+  "compatibility_date": "2026-05-21",
+  "assets": {
+    "directory": "./",
+    "binding": "ASSETS"
+  }
+}

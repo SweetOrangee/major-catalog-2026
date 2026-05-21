@@ -7,6 +7,8 @@
 <meta name="theme-color" content="#F4EFE4" />
 <meta name="description" content="《普通高等学校本科专业目录（2026 年）》交互查阅 · 依据教育部 2026 年 4 月发布版本整理" />
 <title>本科专业目录 · 2026</title>
+<!-- 朱砂印章 favicon：跟左上角 seal 同色同字，SVG 内联，零额外请求 -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path fill='%23B53127' d='M4 6 L12 0 L88 2 L96 8 L100 24 L98 78 L96 92 L88 100 L14 96 L4 94 L0 80 L2 14 Z'/><text x='50' y='72' text-anchor='middle' font-family='Songti SC, STSong, SimSun, serif' font-weight='700' font-size='72' fill='%23F4EFE4'>册</text></svg>" />
 <link rel="stylesheet" href="./assets/style.css" />
 </head>
 <body>
@@ -16,7 +18,7 @@
 <header class="site-header" role="banner">
   <div class="site-header__inner">
     <a href="#" class="site-header__brand" aria-label="返回扉页">
-      <span class="site-header__seal" aria-hidden="true">录</span>
+      <span class="site-header__seal" aria-hidden="true">册</span>
       <span class="site-header__title">
         <span class="site-header__title-main">本科专业目录</span>
       </span>
@@ -37,6 +39,11 @@
       <kbd class="search__hint" aria-hidden="true">/</kbd>
     </form>
 
+    <button type="button" class="site-header__notes" id="open-ai" aria-haspopup="dialog">
+      <span aria-hidden="true">AI 推荐</span>
+      <span class="visually-hidden">使用 AI 为我推荐适合的专业</span>
+    </button>
+
     <button type="button" class="site-header__notes" id="open-notes" aria-haspopup="dialog">
       <span aria-hidden="true">凡例</span>
       <span class="visually-hidden">查看专业目录的编排说明</span>
@@ -48,10 +55,6 @@
 
 <footer class="site-footer" role="contentinfo">
   <div class="site-footer__inner">
-    <p class="site-footer__editor-line">
-      <span class="site-footer__editor">杨　佳</span>
-      <span class="site-footer__affil">北京市第八中学</span>
-    </p>
     <p class="site-footer__source-line">
       资料来源
       <a href="http://www.moe.gov.cn/" target="_blank" rel="noopener">中华人民共和国教育部</a>
@@ -177,5 +180,6 @@
 
 <script src="./assets/data.js"></script>
 <script src="./assets/app.js"></script>
+<script src="./assets/ai.js"></script>
 </body>
 </html>

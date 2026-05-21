@@ -1,0 +1,27 @@
+# Cloudflare Workers Static Assets 排除列表（不应作为静态资源对外暴露的文件）
+# 语法跟 .gitignore 一致
+
+# Worker 入口与配置（main 文件由 wrangler 单独处理，不该被 ASSETS 上传）
+_worker.js
+wrangler.jsonc
+.assetsignore
+
+# 旧的 Pages Functions 目录（已废弃，留空文件夹也无意义）
+functions/
+
+# 构建/数据处理脚本（仅本地用，源码不该暴露）
+scripts/
+
+# 项目元文档
+README.md
+*.md
+
+# 教育部 PDF 原始数据
+*.pdf
+
+# Python 缓存
+__pycache__/
+*.pyc
+
+# 系统/编辑器
+.DS_Store
